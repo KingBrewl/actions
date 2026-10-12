@@ -45,11 +45,11 @@ public class CPHInline
     // All-time counts that get a line of their own instead of the usual one.
     private static readonly Dictionary<int, string> Milestones = new Dictionary<int, string>
     {
-        [100] = "🎉 LET'S GOOO #100! A hundred times, and every one of them meant.",
-        [250] = "🎉 LET'S GOOO #250! At this point it's less a phrase and more a lifestyle.",
-        [500] = "🎉 LET'S GOOO #500! Five hundred. The tavern is engraving it over the door.",
-        [1000] = "🎉 LET'S GOOO #1,000! One thousand. Bards will sing of this. Loudly. Probably saying let's go.",
-        [5000] = "🎉 LET'S GOOO #5,000! Linguists are now studying this channel."
+        [100] = "kingbre3LFG LET'S GOOO #100! A hundred times, and every one of them meant.",
+        [250] = "kingbre3LFG LET'S GOOO #250! At this point it's less a phrase and more a lifestyle.",
+        [500] = "kingbre3LFG LET'S GOOO #500! Five hundred. The tavern is engraving it over the door.",
+        [1000] = "kingbre3LFG LET'S GOOO #1,000! One thousand. Bards will sing of this. Loudly. Probably saying let's go.",
+        [5000] = "kingbre3LFG LET'S GOOO #5,000! Linguists are now studying this channel."
     };
 
     // Persisted, so a Streamer.bot restart mid-stream changes nothing.
@@ -120,7 +120,7 @@ public class CPHInline
 
         CPH.SendMessage(Milestones.ContainsKey(total)
             ? Milestones[total]
-            : "LET'S GOOO! #" + Num(stream) + " this stream, " + Num(total) + " all time");
+            : "kingbre3LFG LET'S GOOO! #" + Num(stream) + " this stream, " + Num(total) + " all time");
     }
 
     private void Undo(string user)

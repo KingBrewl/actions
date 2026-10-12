@@ -223,9 +223,9 @@ public class CPHInline
         }
 
         if (CanEdit())
-            CPH.SendMessage("💀 !death (+1) | !death 3 (+3) | !death undo | !death set <n> | !death switch <name> | !death reset [name] | !death rename <name> | !death forget <name> | !death hide | !deaths [name|list] — !death help <command> for more");
+            CPH.SendMessage("kingbre3PayRespects !death (+1) | !death 3 (+3) | !death undo | !death set <n> | !death switch <name> | !death reset [name] | !death rename <name> | !death forget <name> | !death hide | !deaths [name|list] — !death help <command> for more");
         else
-            CPH.SendMessage("💀 !deaths shows the count | !deaths <name> shows another counter | !deaths list shows them all. Mods" + (VipsCanEdit ? " and VIPs" : "") + " keep score with !death — !death help <command> for more");
+            CPH.SendMessage("kingbre3PayRespects !deaths shows the count | !deaths <name> shows another counter | !deaths list shows them all. Mods" + (VipsCanEdit ? " and VIPs" : "") + " keep score with !death — !death help <command> for more");
     }
 
     private void Add(int delta, string user)
@@ -239,8 +239,8 @@ public class CPHInline
         Store(count);
 
         if (delta < 0) CPH.SendMessage("Un-died. Back to " + count + Suffix(Active()));
-        else if (delta > 1) CPH.SendMessage("💀 +" + delta + " — that's " + count + " now" + Suffix(Active()));
-        else CPH.SendMessage("💀 Death #" + count + Suffix(Active()));
+        else if (delta > 1) CPH.SendMessage("kingbre3PayRespects +" + delta + " — that's " + count + " now" + Suffix(Active()));
+        else CPH.SendMessage("kingbre3PayRespects Death #" + count + Suffix(Active()));
     }
 
     private void Set(int n, string user)
@@ -362,7 +362,7 @@ public class CPHInline
         }
         int count = CountOf(id);
         if (count == 0) { CPH.SendMessage("No deaths yet" + Suffix(id) + ". Suspicious."); return; }
-        CPH.SendMessage("💀 " + count + (count == 1 ? " death" : " deaths") + " so far" + Suffix(id));
+        CPH.SendMessage("kingbre3PayRespects " + count + (count == 1 ? " death" : " deaths") + " so far" + Suffix(id));
     }
 
     private void List()
@@ -371,7 +371,7 @@ public class CPHInline
         if (runs.Count == 0) { CPH.SendMessage("No death counters yet - !death starts one"); return; }
 
         string active = Active();
-        var line = "💀 Death counters:";
+        var line = "kingbre3PayRespects Death counters:";
         foreach (string id in runs)
         {
             string entry = " " + Display(id) + " " + CountOf(id) + (id == active ? " (current)" : "") + ",";

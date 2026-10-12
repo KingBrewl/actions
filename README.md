@@ -170,7 +170,7 @@ asking for the score can never add to it.
 
 | Typed | Does |
 |---|---|
-| `!death` | +1 — *"💀 Death #12 (hc-minecraft-all-bosses)"* |
+| `!death` | +1 — *"kingbre3PayRespects Death #12 (hc-minecraft-all-bosses)"* |
 | `!death undo` (or `-1`, `oops`) | Takes one back, for a misfire |
 | `!death 3` | +3, for a spiral nobody was counting through |
 | `!death set 30` | Absolute, after counting off-stream |
@@ -179,7 +179,7 @@ asking for the score can never add to it.
 | `!death rename <name>` | Renames the current counter, keeping its count |
 | `!death forget <name>` | Deletes a counter — never the current one |
 | `!death hide` | Blanks the text source; every count is kept, and the next `!death` brings it back |
-| `!deaths` | Anyone: *"💀 12 deaths so far (hc-minecraft-all-bosses)"* |
+| `!deaths` | Anyone: *"kingbre3PayRespects 12 deaths so far (hc-minecraft-all-bosses)"* |
 | `!deaths <name>` | Anyone: another counter's count |
 | `!deaths list` | Anyone: every counter and its count |
 | `!death help [command]` | Anyone: the commands they can use (the full set for mods and VIPs, the `!deaths` side for everyone else), or what one does — `!death help switch` |
@@ -357,7 +357,7 @@ welcome-back line.
 ## Let's go
 
 `commands/letsgo.cs` counts how often the streamer says "let's go". Chat is the one listening,
-so **anyone** can count one with `!letsgo` — *"LET'S GOOO! #14 this stream, 1,203 all time"*.
+so **anyone** can count one with `!letsgo` — *"kingbre3LFG LET'S GOOO! #14 this stream, 1,203 all time"*.
 
 | Typed | Does |
 |---|---|
