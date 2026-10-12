@@ -26,6 +26,7 @@ the chat side works the same either way.
 | `commands/hug.cs` | Command → `!hug` | Chat only; the target must be a real Twitch user — see Hugs below |
 | `commands/lurk.cs` | Command → `!lurk` / `!unlurk` | Chat only; `!unlurk` says how long they were gone — see Lurking below |
 | `commands/game.cs` | Command → `!game` | Chat only; reads the current category live from Twitch |
+| `commands/letsgo.cs` | Command → `!letsgo` / `!lg` | Chat counts every "let's go" — this stream and all time — see Let's go below |
 | `commands/raid.cs` | Command → `!raid` | Chat only; posts the raid call twice for chat to copy — once with channel emotes for subs (they only work for subs in another channel's chat), once with emoji for everyone. Set a cooldown on the trigger if it gets spammed |
 
 ## Shoutouts
@@ -144,20 +145,46 @@ asking for the score can never add to it.
 
 | Typed | Does |
 |---|---|
-| `!death` | +1 — *"💀 Death #12 (Elden Ring, no summons)"* |
+| `!death` | +1 — *"💀 Death #12 (hc-minecraft-all-bosses)"* |
 | `!death undo` (or `-1`, `oops`) | Takes one back, for a misfire |
 | `!death 3` | +3, for a spiral nobody was counting through |
 | `!death set 30` | Absolute, after counting off-stream |
-| `!death reset [name]` | Back to zero, optionally naming the new run |
-| `!death challenge <name>` | Renames the run without resetting it |
-| `!death hide` | Blanks the text source — takes the counter off screen entirely |
-| `!deaths` | Anyone: *"💀 12 deaths so far (Elden Ring, no summons)"* |
+| `!death switch <name>` | Changes to another counter, or starts a new one at 0 — the one left behind keeps its count |
+| `!death reset [name]` | Back to zero; with a name, zeroes (or starts) that counter and switches to it |
+| `!death rename <name>` | Renames the current counter, keeping its count |
+| `!death forget <name>` | Deletes a counter — never the current one |
+| `!death hide` | Blanks the text source; every count is kept, and the next `!death` brings it back |
+| `!deaths` | Anyone: *"💀 12 deaths so far (hc-minecraft-all-bosses)"* |
+| `!deaths <name>` | Anyone: another counter's count |
+| `!deaths list` | Anyone: every counter and its count |
+| `!death help [command]` | Anyone: the commands they can use (the full set for mods and VIPs, the `!deaths` side for everyone else), or what one does — `!death help switch` |
 
 **A bare argument is always a delta** — `!death 3` adds three. `set` is the only absolute, which
-is what stops `!death 12` silently wiping eleven deaths when a mod meant to add some.
+is what stops `!death 12` silently wiping eleven deaths when a mod meant to add some. `!deaths`
+only ever reads, whatever follows it.
 
-`ModsOnly` sits at the top of the file — on, so anyone can read the count and only mods and the
-broadcaster can change it.
+`ModsOnly` and `VipsCanEdit` sit at the top of the file — both on, so anyone can read the count
+and mods, VIPs and the broadcaster can change it. If a VIP still gets nothing at all, check the
+Command trigger's own permissions in Streamer.bot aren't set to mods only.
+
+### One counter per run
+
+Every counter has a name, and switching between them never loses a count:
+
+```
+!death rename hc-minecraft-all-bosses   <- name the run in progress (count kept)
+!death switch hc-wow                    <- new counter at 0; Minecraft saved where it was
+!death switch hc-minecraft-all-bosses   <- back to Minecraft, right where it left off
+```
+
+Names are lowercased and spaces become dashes, so `!death switch HC WoW` is `hc-wow`. Each
+counter's count is the persisted global `death.saved.<name>`, the list of them is `death.runs`
+and the current one is `death.run`. `death.count` and `death.label` still always hold the
+*current* counter, which is what `!bad` and the overlay read — neither needs to know there is
+more than one.
+
+A count from before counters had names carries over on the first `!death` or `!deaths` after
+updating: it becomes a counter named after its old run name, or the unnamed one if it had none.
 
 ### Showing it in OBS
 
@@ -193,7 +220,7 @@ it — running both just writes the same number twice.
 
 ### Where the count lives
 
-`death.count` and `death.label` are **persisted globals**, and they are the record: the text on
+Each counter's `death.saved.<name>` is a **persisted global**, and it is the record: the text on
 screen is a copy. That is what makes a Streamer.bot restart mid-run harmless, and it is why
 `!deaths` can answer with no OBS involved at all.
 
@@ -203,8 +230,9 @@ its `counters-refresh.cs` action, both in the `overlays` repo, and can stay off.
 ### Zero shows, nothing hides
 
 `!death reset` leaves **Deaths: 0** on screen — that is the point of resetting at the start of a
-run. The counter goes away only on `!death hide`, which writes empty text and unsets the
-globals. Empty text is the whole trick: no scene item to hide, no visibility to remember to put
+run. The counter goes away only on `!death hide`, which writes empty text and unsets
+`death.count` / `death.label` (so `!bad`'s death lines sit out too) — but keeps every saved
+count, so the next `!death` carries on from where it was. Empty text is the whole trick: no scene item to hide, no visibility to remember to put
 back, and the source can stay in every scene it already sits in. Between challenges there is
 nothing to count, and a stale zero in the corner of a just-chatting stream is worse than no
 counter at all.
@@ -300,6 +328,33 @@ it into *"…emerges from the tavern shadows after 47 minutes…"*. A second `!l
 first time, and a lurk older than `StaleHours` (12) is treated as left over from an earlier
 stream, so nobody is welcomed back "after 26 hours". `!unlurk` without a `!lurk` is just the
 welcome-back line.
+
+## Let's go
+
+`commands/letsgo.cs` counts how often the streamer says "let's go". Chat is the one listening,
+so **anyone** can count one with `!letsgo` — *"LET'S GOOO! #14 this stream, 1,203 all time"*.
+
+| Typed | Does |
+|---|---|
+| `!letsgo` | +1 (anyone) — anything typed after it is just cheering and is ignored |
+| `!letsgo count` | Anyone: both numbers, without adding one |
+| `!letsgo undo` | Mods, VIPs: takes one back |
+| `!letsgo set <n>` / `setall <n>` | Mods, VIPs: sets this stream's / the all-time count exactly — each moves one number only |
+| `!letsgo help [command]` | Anyone: the commands they can use (everything for mods and VIPs, counting and the score for everyone else), or what one does — `!letsgo help setall` |
+
+**A burst counts once.** Five people typing `!letsgo` at the same "let's go" are five people
+agreeing, so anything inside `BurstSeconds` (10) of the last count is silently ignored — the
+same idea as `!clip` and `!bad`. Mods and VIPs aren't exempt; they heard the same one.
+
+**"This stream" resets itself**: a count after more than `NewStreamAfterHours` (6) of quiet
+starts the stream number over, so there's no Stream Online trigger to set up. The all-time count
+never resets on its own. All-time milestones (100, 250, 500, 1,000, 5,000) get a line of their
+own, in the `Milestones` table at the top of the file.
+
+The numbers live in persisted globals (`letsgo.stream`, `letsgo.total`, `letsgo.lastAt`). An
+OBS Text source works the way the death counter's does — off by default; add a Text source
+named `LetsGo`, then switch `UpdateObsText` on. A **Hot Key** trigger on the same action counts
+one too, and skips the burst check, since that's you at your own keyboard.
 
 ## Gotchas
 
