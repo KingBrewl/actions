@@ -1,0 +1,314 @@
+# Streamer.bot actions
+
+The stream's chat commands and rewards, version controlled. Each file is a self-contained
+Streamer.bot C# action.
+
+Some of them can also put a card on the old alerts overlay (the `overlays` repo) with
+`CPH.WebsocketBroadcastJson`. With no overlay listening that broadcast just goes nowhere, so
+the chat side works the same either way.
+
+## Importing an action
+
+1. In Streamer.bot: **Actions → right-click → Add Action**, name it after the file.
+2. Add a **C# Method** sub-action and paste the file's full contents.
+3. Attach the trigger from the table below (right-click the action → Test Trigger to fire it).
+
+## Actions
+
+| File | Trigger | Notes |
+|---|---|---|
+| `rewards/first.cs` | Channel Point Reward → *First* | Chat only — an in-character greeting for the first redeemer; the reward must be created in Streamer.bot — see First below |
+| `commands/shoutout.cs` | Command → `!so` / `!shoutout` (mods), or Twitch → Raid | Streamer card: avatar, last category, bio — see Shoutouts below |
+| `commands/quote.cs` | Command → `!quote` | Chat only; quotes persist in SB globals |
+| `commands/clip.cs` | Command → `!clip` | Cuts a Twitch clip, posts the link, cards it on screen — see Clips below |
+| `commands/death.cs` | Command → `!death` / `!deaths` | The challenge death counter: chat reply plus an OBS text source — see Death counter below |
+| `commands/bad.cs` | Command → `!bad` | Chat calls the play: one random roast, aware of the current category and the death count — see Roasts below |
+
+## Shoutouts
+
+`commands/shoutout.cs` is the one action that reads *back* from Twitch rather than just
+reporting what happened. It looks the channel up through Streamer.bot's own credentials — no
+API key to configure — and broadcasts a `"variant": "shoutout"` alert, which the overlay
+renders as a person card instead of an event strip: round avatar, display name, the category
+they last streamed with its box art, their bio (three lines), and `twitch.tv/handle`.
+
+The card holds for `DEFAULT_SHOUTOUT_MS` in the `overlays` repo's `src/alerts/commands.ts` (18s). The action sends
+no `ms` of its own, so that constant is the only place to change it.
+
+### Box art
+
+Twitch serves category art from a predictable path, so no second API call and no key is
+needed — the game's **id** off the channel record is the whole job. The action prefers it,
+and falls back to the older name-keyed URL only when the record carries no id.
+
+The id is what keeps that honest. A name Twitch doesn't recognise (compound names, anything
+with a slash) does **not** 404 — it redirects to a grey `404_boxart` placeholder that loads
+as a perfectly valid image, so nothing downstream can tell it from real art: `onError` never
+fires, and the CDN sends no CORS header, so the pixels can't be read either. An id from the
+channel record can't land there. If you are on the name fallback and see a grey box, that is
+what it is.
+
+Streamer.bot's inline compiler references only mscorlib, so `System.Net` is out of reach for
+verifying the url here without asking you to add an assembly reference — and `System.Uri` with
+it, which is why the percent-encoding in `Escape` is done by hand.
+
+**Writing new actions:** mscorlib only. `Convert`, `Random`, `StringBuilder`, `Encoding` and
+`System.Reflection` are all fine; anything from `System.dll` — `System.Net`, `System.Uri`,
+`System.Linq` — will not compile.
+
+Attach it twice if you want both halves:
+
+- **Command → `!so`** with *Mods* and *Broadcaster* ticked. It also checks the mod flag
+  itself, so an accidentally-public command still won't let chat spam it.
+- **Twitch → Raid**. The action notices the raid's `fromUser`
+  argument, shouts the raider out without anyone typing, and skips the mod check.
+
+Three toggles sit at the top of the file: `BioLimit` (200 characters over the wire),
+`SendNativeShoutout` (also fires Twitch's own `/shoutout`, which puts the channel in
+viewers' sidebars — Twitch rate limits it to one per 2 minutes and the action ignores a
+rejection), and `PostChatMessage` (the "go show them some love" line in chat).
+
+Twitch's SB wrappers have been renamed across versions, and Streamer.bot hands `CPH` out as
+an interface — a method declared only there is not always reachable by exact name on the
+concrete type, which is why the category row came back empty at first. So nothing is spelled
+out: the action takes any single-string method whose name looks like a channel-info getter
+(preferring the ByLogin overload over ById, since the wrong one silently returns nothing),
+then any property on the result that looks like a category, then the user record.
+
+The card degrades a field at a time — a channel with no bio, no category, or a default avatar
+still gets a shoutout, just a shorter one. If the category row is missing, the action writes
+what it *did* find to the Streamer.bot log (**Logs** tab, or `%APPDATA%\Streamer.bot\logs\`):
+either the single-string methods matching "channel" that your build exposes, or every
+property on the record it got back. One test run names what to reach for.
+
+## Clips
+
+`commands/clip.cs` cuts a Twitch clip of the last ~30 seconds and posts the link. Twitch clips
+what already happened, so `!clip` *after* the moment is the right order — nobody has to
+predict anything.
+
+Two things have to be true, and neither is something the action can fix:
+
+- **The stream must be live.** There is no buffer to cut from otherwise, and Twitch rejects
+  the call. Chat is told exactly that rather than left wondering.
+- **Streamer.bot's Twitch account needs the `clips:edit` scope.** If `!clip` has never worked
+  and the stream is definitely live, that is the thing to check: **Platforms → Twitch →**
+  re-authorise the broadcaster account. A scope granted before you ever wanted clips is not
+  retroactively added.
+
+Four toggles sit at the top of the file: `ModsOnly` (off — anyone can clip), `CooldownSeconds`
+(30), `PostChatMessage` and `ShowOverlayCard` (an 8s `🎬 <user> clipped it!` card, off is a
+perfectly reasonable setting since the chat link is the actual payload).
+
+### The cooldown re-serves, it doesn't reject
+
+Five people typing `!clip` at the same funny thing is five people agreeing, not five moments.
+Inside `CooldownSeconds` the action hands back the link it just made instead of cutting a
+near-identical clip and instead of telling anyone to wait — so the second person through still
+gets a url they can open. The last clip lives in persisted globals (`clip.lastUrl`,
+`clip.lastAt`, `clip.lastBy`), so it survives a Streamer.bot restart mid-stream.
+
+An unreadable clock fails *open* — a duplicate clip costs nothing next to a missed moment.
+
+### Reading the url back
+
+Twitch's create-clip response carries only an **id** and an **edit url**; the plain view url is
+derived, not sent. So how much of it a Streamer.bot build fills in varies, and the action takes
+`Url`, then `EditUrl` with the `/edit` suffix trimmed (that url works for you and for nobody
+else, so it is never posted as-is), then builds `clips.twitch.tv/<id>` from the id.
+
+A build whose clip method returns a bare `true` has made the clip without saying where it went.
+That is not a failure and is not reported as one — chat gets "clipped it!" and a pointer to the
+clips page, and the log gets the method signatures it saw. Saying "no clip" about a clip that is
+sitting in the dashboard is the more expensive lie.
+
+The method itself is found by shape, the way `commands/shoutout.cs` finds its getters. This one
+is deliberately the exception to that file's no-mutators rule — cutting a clip *is* a mutation —
+so the name has to contain `clip` as well as `create`, which is what stops the pattern wandering
+onto some other create-shaped method.
+
+**A clip is public the moment it exists**, and anyone in chat can make one. It is not a
+moderation surface: the only thing the action lets a viewer put on screen is their own username.
+Any text typed after `!clip` is ignored outright, which is why — unlike `alert-cheer.cs` — there
+are no blocked terms here to keep in sync.
+
+## Death counter
+
+`commands/death.cs` counts deaths in a challenge run. Attach it to **one** Command trigger with
+both `!death` and `!deaths` in the command box — the plural is the read-only one, so a viewer
+asking for the score can never add to it.
+
+| Typed | Does |
+|---|---|
+| `!death` | +1 — *"💀 Death #12 (Elden Ring, no summons)"* |
+| `!death undo` (or `-1`, `oops`) | Takes one back, for a misfire |
+| `!death 3` | +3, for a spiral nobody was counting through |
+| `!death set 30` | Absolute, after counting off-stream |
+| `!death reset [name]` | Back to zero, optionally naming the new run |
+| `!death challenge <name>` | Renames the run without resetting it |
+| `!death hide` | Blanks the text source — takes the counter off screen entirely |
+| `!deaths` | Anyone: *"💀 12 deaths so far (Elden Ring, no summons)"* |
+
+**A bare argument is always a delta** — `!death 3` adds three. `set` is the only absolute, which
+is what stops `!death 12` silently wiping eleven deaths when a mod meant to add some.
+
+`ModsOnly` sits at the top of the file — on, so anyone can read the count and only mods and the
+broadcaster can change it.
+
+### Showing it in OBS
+
+No browser source and no overlay build: the action writes an **OBS Text source** through
+Streamer.bot's own OBS connection.
+
+1. In OBS, add a **Text (GDI+)** source named `Deaths` — font, colour, outline and position are
+   all yours, and it can sit in as many scenes as you like.
+2. In Streamer.bot: **Platforms → OBS Studio**, connect if you haven't. That is the only
+   dependency; the action needs no scene name and no source id.
+3. Type `!death`. The source fills in.
+
+Four toggles configure it: `ObsTextSource` (the source's **name**, `"Deaths"` — it must match
+exactly), `ObsTextFormat` (`"Deaths: {count}"`; `{label}` is the run name, and wrapping it as
+`"Deaths: {count} ({label})"` is tidied back to `"Deaths: 12"` on an unnamed run rather than
+leaving empty brackets), `ObsConnection` for a rig with more than one OBS, and `UpdateObsText`
+to switch the whole thing off.
+
+Addressed by source **name**, using `SetInputSettings` rather than SB's `ObsSetGdiText` wrapper:
+a counter shared across scenes then needs no scene named anywhere, so it cannot quietly stop
+updating when you build a new scene around it — and it works for a FreeType2 source too, where
+the GDI+ wrapper does not.
+
+The nice property of doing it this way is that **OBS saves the text with the scene collection**.
+Close OBS at 43 deaths, open it tomorrow, and it still says 43 before Streamer.bot has sent
+anything. Nothing needs replaying at startup.
+
+#### If Streamer.bot isn't connected to OBS
+
+Set `TextFilePath` to a path instead, and tick **Read from file** on the text source. A file
+needs no connection at all. It is the alternative to the OBS route rather than a companion to
+it — running both just writes the same number twice.
+
+### Where the count lives
+
+`death.count` and `death.label` are **persisted globals**, and they are the record: the text on
+screen is a copy. That is what makes a Streamer.bot restart mid-run harmless, and it is why
+`!deaths` can answer with no OBS involved at all.
+
+`ShowOnOverlay` (off) also sends the count to the old alerts overlay; it needs that overlay and
+its `counters-refresh.cs` action, both in the `overlays` repo, and can stay off.
+
+### Zero shows, nothing hides
+
+`!death reset` leaves **Deaths: 0** on screen — that is the point of resetting at the start of a
+run. The counter goes away only on `!death hide`, which writes empty text and unsets the
+globals. Empty text is the whole trick: no scene item to hide, no visibility to remember to put
+back, and the source can stay in every scene it already sits in. Between challenges there is
+nothing to count, and a stale zero in the corner of a just-chatting stream is worse than no
+counter at all.
+
+### Adding a second counter
+
+Nothing here is death-specific — bosses beaten, cheese consumed, a counter is a name and a
+number. A second one is a copy of `commands/death.cs` with its own command, globals and
+`ObsTextSource`, pointed at a second text source in OBS.
+
+## Roasts
+
+`commands/bad.cs` is the one viewers reach for when you are playing badly. Attach it to a
+**Command** trigger with `!bad` in the box — no mods tick, since a roast nobody in chat can
+call is just you talking to yourself.
+
+```
+viewer:  !bad
+bot:     Elden Ring shipped with a tutorial, KingBrewl. It's right there in the menu.
+```
+
+The lines live in the `Roasts` array at the top of the file and that array is the whole
+configurable surface — edit it, paste the action back in, done. Four placeholders are filled
+in: `{streamer}`, `{user}` (whoever typed it), `{game}` (the category the channel is set to
+right now) and `{deaths}` (the counter from `commands/death.cs`).
+
+**A line is only picked when every placeholder it uses has a value.** That is what lets the
+array carry lines that lean on the game and lines that lean on the death count without either
+turning into a sentence with a hole in it: `{game}` lines sit out when nothing knows what the
+category is, `{deaths}` lines sit out until a run is actually in progress, and the general
+lines always play. So one array covers a no-category just-chatting stream and a forty-death
+boss fight without any setup in between.
+
+The category comes off Streamer.bot's own Twitch credentials — no API key, found by shape the
+way `commands/shoutout.cs` finds it, and mutators are excluded, because a single-string method
+with `game` in the name could just as easily be the one that *changes* your category live on
+stream. The death count is just the `death.count` global read back, so `commands/death.cs` does
+not need to be imported for `!bad` to work — its lines simply never come up.
+
+### Only one target
+
+**Anything typed after `!bad` is ignored outright.** Not parsed, not echoed, not treated as a
+name — the command roasts the broadcaster and there is no spelling of it that roasts anyone
+else. That is deliberate and it is the reason this action needs no blocked-terms list to keep
+in sync with `alert-cheer.cs`: the only viewer-supplied text that ever reaches chat is the
+username of the person who typed it, exactly as with `!clip`.
+
+The flip side is that these lines go out under **your** channel's name. Keep them affectionate
+and aimed at the play rather than the player; a line Twitch would object to is your problem,
+not chat's.
+
+### The cooldown goes quiet
+
+`CooldownSeconds` (45) works like `!clip`'s in spirit and differently in practice. Five people
+typing `!bad` at the same bad play are five people agreeing, not five bad plays — but unlike a
+clip there is nothing to re-serve them, so the calls after the first do **nothing at all**: no
+second roast, and no "wait 30 seconds" line either. A bot scolding four people for agreeing is
+more chat noise than the roast it is protecting.
+
+An unreadable clock fails **open**, for the same reason the clip cooldown does: one extra roast
+costs nothing, and a stuck cooldown kills the command silently for the rest of the stream.
+
+### Not the same one twice
+
+The last `NoRepeatMemory` (20) roasts are off the table when picking the next, which is what
+keeps a finite list from feeling finite. They are remembered in the `bad.recent` persisted
+global as hashes of the line rather than indexes into the array — so editing `Roasts` can't
+leave a stale number pointing at some innocent bystander of a roast — and when everything
+currently eligible has been said lately the memory is simply forgotten and the whole set
+comes back.
+
+If you grow the memory, the number to stay under is **the count of lines with no placeholder
+in them** — currently 64 of the 97 — and not the length of the array. A just-chatting stream
+with no death counter running sees only those, and a memory as long as that pool would spend
+every pick forgetting and starting over.
+
+`ShowOverlayCard` puts the line on screen as well, off by default: a roast belongs in chat,
+where the person being roasted is already looking.
+
+## Gotchas
+
+- **A fresh clip link works before the clip is watchable.** Twitch returns the url immediately
+  and finishes processing a few seconds later, so the first person to click may land on a
+  still-rendering clip. Nothing is wrong; a reload fixes it.
+- **A shoutout costs a Twitch API round trip** before anything is posted — usually well under a
+  second, but not instant.
+- **A hotkey is the natural way to add a death while you are playing.** Add a **Hot Key**
+  trigger to `commands/death.cs` itself and it steps by one, exactly as `!death` does —
+  persisted global, chat line and OBS text all included. A hotkey carries no user and no mod
+  flag, so `ModsOnly` deliberately does not apply to it: a trigger with no chat user behind it
+  is you, at your own keyboard. A channel point redeem does carry a user, and is still screened.
+
+## First
+
+`rewards/first.cs` greets whoever claims the *First* reward in chat, in the tavern voice of
+`!lurk`. That is all it does — the "only the first person" part is the reward's own setting,
+which Twitch enforces server side, so two people redeeming in the same second can't both win.
+
+Create the reward **in Streamer.bot** (**Platforms → Twitch → Channel Point Rewards →**
+right-click **→ Create Reward**), not the Twitch dashboard — Twitch only lets the app that made
+a reward refund, rename or pause it, so this keeps those doors open for later.
+
+| Setting | Value |
+|---|---|
+| Cost | 1 |
+| Max Per Stream | 1 |
+| Skip Reward Requests Queue | on |
+
+The per-stream limit resets when a stream starts. Twitch still accepts redemptions while you're
+offline, so someone can claim it before you go live; if that turns out to happen, pausing the
+reward on Stream Offline and unpausing it on Stream Online is the fix.
