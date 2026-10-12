@@ -26,6 +26,7 @@ the chat side works the same either way.
 | `commands/hug.cs` | Command → `!hug` | Chat only; the target must be a real Twitch user — see Hugs below |
 | `commands/lurk.cs` | Command → `!lurk` / `!unlurk` | Chat only; `!unlurk` says how long they were gone — see Lurking below |
 | `commands/game.cs` | Command → `!game` | Chat only; reads the current category live from Twitch |
+| `commands/commands.cs` | Command → `!commands` / `!cmds` / `!cmd` | Chat only; lists the commands the asker can use (VIPs and mods see theirs too). The list is written by hand — **add new commands to it** |
 | `commands/links.cs` | Command → `!discord`, `!social` / `!socials`, `!youtube` / `!yt` — all in one trigger | Chat only; every link is written once at the top of the file and each message is built from it, so a changed invite or handle is a one-line edit |
 | `commands/letsgo.cs` | Command → `!letsgo` / `!lg` | Chat counts every "let's go" — this stream and all time — see Let's go below |
 | `commands/raid.cs` | Command → `!raid` | Chat only; posts the raid call twice for chat to copy — once with channel emotes for subs (they only work for subs in another channel's chat), once with emoji for everyone. Set a cooldown on the trigger if it gets spammed |
@@ -58,7 +59,8 @@ Streamer.bot's inline compiler references only mscorlib, so `System.Net` is out 
 verifying the url here without asking you to add an assembly reference — and `System.Uri` with
 it, which is why the percent-encoding in `Escape` is done by hand.
 
-**Writing new actions:** mscorlib only. `Convert`, `Random`, `StringBuilder`, `Encoding` and
+**Writing new actions:** add the command to the list in `commands/commands.cs` so `!commands`
+shows it. mscorlib only. `Convert`, `Random`, `StringBuilder`, `Encoding` and
 `System.Reflection` are all fine; anything from `System.dll` — `System.Net`, `System.Uri`,
 `System.Linq` — will not compile.
 
