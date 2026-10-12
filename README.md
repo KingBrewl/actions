@@ -17,6 +17,7 @@ the chat side works the same either way.
 
 | File | Trigger | Notes |
 |---|---|---|
+| `rewards/checkin.cs` | Channel Point Reward → *Check-in*, **and** Twitch → Stream Online | Chat only — arrival number and visit count; the on-screen clip is Tangia's — see Check-in below |
 | `rewards/first.cs` | Channel Point Reward → *First* | Chat only — an in-character greeting for the first redeemer; the reward must be created in Streamer.bot — see First below |
 | `commands/shoutout.cs` | Command → `!so` / `!shoutout` (mods), or Twitch → Raid | Streamer card: avatar, last category, bio — see Shoutouts below |
 | `commands/quote.cs` | Command → `!quote` | Chat only; quotes persist in SB globals |
@@ -391,3 +392,47 @@ a reward refund, rename or pause it, so this keeps those doors open for later.
 The per-stream limit resets when a stream starts. Twitch still accepts redemptions while you're
 offline, so someone can claim it before you go live; if that turns out to happen, pausing the
 reward on Stream Offline and unpausing it on Stream Online is the fix.
+
+## Check-in
+
+`rewards/checkin.cs` is the reward for everyone who isn't First. Each viewer can check in once a
+stream, and chat gets their arrival number and how many times they've checked in:
+
+> Ponytail is the 4th to check in tonight! Welcome back to the hearth - that's 12 visits all told.
+
+A first-ever check-in gets a welcome instead, and visits 10, 25, 50, 100 and 250 get a line of
+their own (the `VisitMilestones` table at the top of the file).
+
+**No streaks.** Twitch already shows watch streaks, and a streak that resets because someone
+forgot to click is a penalty rather than a reward. The visit count only ever goes up.
+
+| Setting | Value |
+|---|---|
+| Cost | up to you — cheap enough that nobody thinks twice |
+| Max Per User Per Stream | 1 |
+| Skip Reward Requests Queue | on |
+
+Attach **two** triggers to the action: the reward, and **Twitch → Stream Online**. Stream
+Online starts the arrival count over and opens a new night of check-ins. It isn't fragile
+about it: if Streamer.bot wasn't running when you went live, the first check-in after
+`NewStreamAfterHours` (6) of quiet starts the new stream instead. And a second Stream Online
+within those 6 hours — going live again after a crash — is treated as the same stream, so the
+arrival count carries on and nobody is counted twice.
+
+Twitch resets the per-stream limit on any go-live, crash restarts included, so after one a
+viewer who already checked in *can* redeem again. They're told they're already in and nothing
+is counted, but the points are spent; refund them from the reward queue if it comes up.
+
+The channel-wide numbers are persisted globals (`checkin.stream`, `checkin.arrivals`,
+`checkin.lastAt`, `checkin.startedAt`); each viewer's last stream and total are Twitch user
+variables (`checkin.lastStream`, `checkin.total`).
+
+### The clip is Tangia's
+
+Nothing in the action talks to Tangia, and nothing needs to. A redemption is a Twitch event that
+every connected app sees on its own: Streamer.bot posts the chat line, and Tangia plays the
+clip off the same redemption, side by side. Point the Tangia alert at the *Check-in* reward and
+that's the whole integration.
+
+A check-in rush at the start of a stream queues one clip per redemption, so keep the clip
+short.
