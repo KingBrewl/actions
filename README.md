@@ -26,6 +26,7 @@ the chat side works the same either way.
 | `commands/hug.cs` | Command → `!hug` | Chat only; the target must be a real Twitch user — see Hugs below |
 | `commands/lurk.cs` | Command → `!lurk` / `!unlurk` | Chat only; `!unlurk` says how long they were gone — see Lurking below |
 | `commands/game.cs` | Command → `!game` | Chat only; reads the current category live from Twitch |
+| `commands/links.cs` | Command → `!discord`, `!social` / `!socials`, `!youtube` / `!yt` — all in one trigger | Chat only; every link is written once at the top of the file and each message is built from it, so a changed invite or handle is a one-line edit |
 | `commands/letsgo.cs` | Command → `!letsgo` / `!lg` | Chat counts every "let's go" — this stream and all time — see Let's go below |
 | `commands/raid.cs` | Command → `!raid` | Chat only; posts the raid call twice for chat to copy — once with channel emotes for subs (they only work for subs in another channel's chat), once with emoji for everyone. Set a cooldown on the trigger if it gets spammed |
 
