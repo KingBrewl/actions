@@ -19,7 +19,7 @@ the chat side works the same either way.
 |---|---|---|
 | `rewards/checkin.cs` | Channel Point Reward → *Check-in*, **and** Twitch → Stream Online | Chat only — arrival number and visit count; the on-screen clip is Tangia's — see Check-in below |
 | `rewards/first.cs` | Channel Point Reward → *First* | Chat only — an in-character greeting for the first redeemer; the reward must be created in Streamer.bot — see First below |
-| `commands/shoutout.cs` | Command → `!so` / `!shoutout` (mods), or Twitch → Raid | Streamer card: avatar, last category, bio — see Shoutouts below |
+| `commands/shoutout.cs` | Command → `!so` / `!shoutout` (mods, VIPs), or Twitch → Raid | Streamer card: avatar, last category, bio — see Shoutouts below |
 | `commands/quote.cs` | Command → `!quote` | Chat only; quotes persist in SB globals |
 | `commands/clip.cs` | Command → `!clip` | Cuts a Twitch clip, posts the link, cards it on screen — see Clips below |
 | `commands/death.cs` | Command → `!death` / `!deaths` | The challenge death counter: chat reply plus an OBS text source — see Death counter below |
@@ -67,8 +67,8 @@ shows it. mscorlib only. `Convert`, `Random`, `StringBuilder`, `Encoding` and
 
 Attach it twice if you want both halves:
 
-- **Command → `!so`** with *Mods* and *Broadcaster* ticked. It also checks the mod flag
-  itself, so an accidentally-public command still won't let chat spam it.
+- **Command → `!so`** with *Mods*, *VIPs* and *Broadcaster* ticked. It also checks the mod
+  and VIP flags itself, so an accidentally-public command still won't let chat spam it.
 - **Twitch → Raid**. The action notices the raid's `fromUser`
   argument, shouts the raider out without anyone typing, and skips the mod check.
 
@@ -92,9 +92,26 @@ property on the record it got back. One test run names what to reach for.
 
 ## Clips
 
-`commands/clip.cs` cuts a Twitch clip of the last ~30 seconds and posts the link. Twitch clips
+`commands/clip.cs` cuts a Twitch clip of what just happened and posts the link. Twitch clips
 what already happened, so `!clip` *after* the moment is the right order — nobody has to
 predict anything.
+
+| Typed | Does |
+|---|---|
+| `!clip` | The last 30 seconds |
+| `!clip 15` / `!clip 60` (or `15s`) | Any length from 5 to 60 seconds — Twitch's limits |
+| `!clip that jump was clean` | Titles the clip; with no title it takes the stream title |
+| `!clip 15 that jump was clean` | Both |
+| `!clip last` | The latest clip's link again, cooldown or not |
+| `!clip help` | All of the above, in chat |
+
+A number out of range on its own (`!clip 90`) gets a "5 to 60 seconds" reply; with words after
+it (`!clip 3 kills in one shot`) it was never a length, so the whole thing is the title.
+
+**Length and title need an up-to-date Streamer.bot** — Twitch added both to its clip API in
+December 2025, and Streamer.bot's `CreateClip(title, duration)` passes them on. On an older
+build `!clip` still works, at 30 seconds and untitled, and says so in chat when someone asked
+for more.
 
 Two things have to be true, and neither is something the action can fix:
 
@@ -105,8 +122,8 @@ Two things have to be true, and neither is something the action can fix:
   re-authorise the broadcaster account. A scope granted before you ever wanted clips is not
   retroactively added.
 
-Four toggles sit at the top of the file: `ModsOnly` (off — anyone can clip), `CooldownSeconds`
-(30), `PostChatMessage` and `ShowOverlayCard` (an 8s `🎬 <user> clipped it!` card, off is a
+The toggles sit at the top of the file: `ModsOnly` (off — anyone can clip), `CooldownSeconds`
+(30), `DefaultSeconds` (30), `AllowTitles` (on), `PostChatMessage` and `ShowOverlayCard` (an 8s `🎬 <user> clipped it!` card, off is a
 perfectly reasonable setting since the chat link is the actual payload).
 
 ### The cooldown re-serves, it doesn't reject
@@ -134,12 +151,16 @@ sitting in the dashboard is the more expensive lie.
 The method itself is found by shape, the way `commands/shoutout.cs` finds its getters. This one
 is deliberately the exception to that file's no-mutators rule — cutting a clip *is* a mutation —
 so the name has to contain `clip` as well as `create`, which is what stops the pattern wandering
-onto some other create-shaped method.
+onto some other create-shaped method. Shapes are tried richest first — `(title, duration)`, then
+a title alone, then the older no-argument and post-to-chat-flag forms — and the **first method
+that makes a clip is the last one called**, so a build with several can't cut the moment twice.
 
-**A clip is public the moment it exists**, and anyone in chat can make one. It is not a
-moderation surface: the only thing the action lets a viewer put on screen is their own username.
-Any text typed after `!clip` is ignored outright, which is why — unlike `alert-cheer.cs` — there
-are no blocked terms here to keep in sync.
+**A clip is public the moment it exists**, and anyone in chat can make one. The title is the one
+piece of viewer text the action passes on, and it goes to Twitch — shown on the clips page —
+never to chat or the overlay card. Twitch runs it through AutoMod and refuses a clip whose title
+fails; the action then cuts it again untitled and says so, so a bad title never costs the
+moment. That is why there is still no blocked-terms list to keep in sync here. If chat abuses titles
+anyway, `AllowTitles` off goes back to ignoring everything after the length.
 
 ## Death counter
 

@@ -4,9 +4,9 @@ using System.Reflection;
 using System.Text;
 using Newtonsoft.Json;
 
-// Trigger: Twitch -> Command "!so" / "!shoutout" (mods and the broadcaster). The same action
-// also works on a Twitch -> Raid trigger: it sees the raid's `fromUser` argument, shouts the
-// raider out automatically, and skips the mod check, since nobody typed anything.
+// Trigger: Twitch -> Command "!so" / "!shoutout" (mods, VIPs and the broadcaster). The same
+// action also works on a Twitch -> Raid trigger: it sees the raid's `fromUser` argument, shouts
+// the raider out automatically, and skips the mod check, since nobody typed anything.
 //
 //   !so ponytailgaming     !so @PonytailGaming     (case and @ don't matter)
 //
@@ -36,9 +36,9 @@ public class CPHInline
             ? Arg(new[] { "fromUserName", "fromUsername", "fromUser" }, "")
             : FirstWord(Arg(new[] { "rawInput", "input0", "message" }, ""));
 
-        if (!fromRaid && !Flag(new[] { "isBroadcaster", "broadcaster", "isModerator", "moderator" }))
+        if (!fromRaid && !Flag(new[] { "isBroadcaster", "broadcaster", "isModerator", "moderator", "isVip", "vip" }))
         {
-            CPH.SendMessage(Arg(new[] { "userName", "user" }, "you") + ", only mods can use !so");
+            CPH.SendMessage(Arg(new[] { "userName", "user" }, "you") + ", only mods and VIPs can use !so");
             return true;
         }
 

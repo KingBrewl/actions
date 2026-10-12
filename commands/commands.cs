@@ -37,9 +37,7 @@ public class CPHInline
 
         // ---- mods and VIPs --------------------------------------------------------------
         new object[] { "!death", Vips },
-
-        // ---- mods -----------------------------------------------------------------------
-        new object[] { "!so", Mods }
+        new object[] { "!so", Vips }
     };
 
     // The commands with a help of their own, pointed at on the end of the line.
