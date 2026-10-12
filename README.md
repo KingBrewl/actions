@@ -23,6 +23,10 @@ the chat side works the same either way.
 | `commands/clip.cs` | Command → `!clip` | Cuts a Twitch clip, posts the link, cards it on screen — see Clips below |
 | `commands/death.cs` | Command → `!death` / `!deaths` | The challenge death counter: chat reply plus an OBS text source — see Death counter below |
 | `commands/bad.cs` | Command → `!bad` | Chat calls the play: one random roast, aware of the current category and the death count — see Roasts below |
+| `commands/hug.cs` | Command → `!hug` | Chat only; the target must be a real Twitch user — see Hugs below |
+| `commands/lurk.cs` | Command → `!lurk` / `!unlurk` | Chat only; `!unlurk` says how long they were gone — see Lurking below |
+| `commands/game.cs` | Command → `!game` | Chat only; reads the current category live from Twitch |
+| `commands/raid.cs` | Command → `!raid` | Chat only; posts the raid call twice for chat to copy — once with channel emotes for subs (they only work for subs in another channel's chat), once with emoji for everyone. Set a cooldown on the trigger if it gets spammed |
 
 ## Shoutouts
 
@@ -279,6 +283,23 @@ every pick forgetting and starting over.
 
 `ShowOverlayCard` puts the line on screen as well, off by default: a roast belongs in chat,
 where the person being roasted is already looking.
+
+## Hugs
+
+`commands/hug.cs` is the one command that *does* put a viewer's text in chat — the name being
+hugged — so that name is held to what a Twitch login can look like and then looked up. Only a
+user Twitch knows is ever posted, spelled as Twitch spells it; anything else gets "couldn't find
+that adventurer" without repeating what was typed. `!hug` with no name hugs the whole tavern,
+and hugging yourself gets its own line rather than "X pulls X close".
+
+## Lurking
+
+`commands/lurk.cs` serves both `!lurk` and `!unlurk` — put both in one Command trigger's box.
+`!lurk` notes the time in a persisted Twitch user variable (`lurk.since`), and `!unlurk` turns
+it into *"…emerges from the tavern shadows after 47 minutes…"*. A second `!lurk` keeps the
+first time, and a lurk older than `StaleHours` (12) is treated as left over from an earlier
+stream, so nobody is welcomed back "after 26 hours". `!unlurk` without a `!lurk` is just the
+welcome-back line.
 
 ## Gotchas
 
