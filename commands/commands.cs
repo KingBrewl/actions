@@ -27,6 +27,8 @@ public class CPHInline
         new object[] { "!lurk", Everyone },
         new object[] { "!unlurk", Everyone },
         new object[] { "!hug", Everyone },
+        new object[] { "!pillory", Everyone },
+        new object[] { "!tuck", Everyone },
         new object[] { "!quote", Everyone },
         new object[] { "!clip", Everyone },
         new object[] { "!bad", Everyone },

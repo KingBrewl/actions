@@ -25,6 +25,8 @@ the chat side works the same either way.
 | `commands/death.cs` | Command → `!death` / `!deaths` | The challenge death counter: chat reply plus an OBS text source — see Death counter below |
 | `commands/bad.cs` | Command → `!bad` | Chat calls the play: one random roast, aware of the current category and the death count — see Roasts below |
 | `commands/hug.cs` | Command → `!hug` | Chat only; the target must be a real Twitch user — see Hugs below |
+| `commands/pillory.cs` | Command → `!pillory` | Chat only, and for show — nobody is actually timed out; the target must be a real Twitch user — see Pillory below |
+| `commands/tuck.cs` | Command → `!tuck` | Chat only; tucks a viewer in for bed — the target must be a real Twitch user, and a bare `!tuck` tucks in the asker — see Tucking in below |
 | `commands/lurk.cs` | Command → `!lurk` / `!unlurk` | Chat only; `!unlurk` says how long they were gone — see Lurking below |
 | `commands/game.cs` | Command → `!game` | Chat only; reads the current category live from Twitch |
 | `commands/commands.cs` | Command → `!commands` / `!cmds` / `!cmd` | Chat only; lists the commands the asker can use (VIPs and mods see theirs too). The list is written by hand — **add new commands to it** |
@@ -344,6 +346,30 @@ hugged — so that name is held to what a Twitch login can look like and then lo
 user Twitch knows is ever posted, spelled as Twitch spells it; anything else gets "couldn't find
 that adventurer" without repeating what was typed. `!hug` with no name hugs the whole tavern,
 and hugging yourself gets its own line rather than "X pulls X close".
+
+## Pillory
+
+`commands/pillory.cs` is a pretend timeout: anyone can `!pillory @name` to clap someone in the
+town stocks for a random crime and a random sentence — *"HEAR YE, HEAR YE! ponytailgaming stands
+accused of backseating…"*. **Nobody is actually timed out**; it is a chat line and nothing else.
+
+The name is checked and looked up the way `!hug` does it, so only a real Twitch user is ever
+posted. The lines, crimes and sentences are three arrays at the top of the file — the whole
+configurable surface, and nothing a viewer types besides the name reaches chat. Pillorying
+yourself gets its own confession line, and `!pillory` with no name says how to use it.
+
+Each target's trips to the stocks are counted in a persisted Twitch user variable
+(`pillory.count`), and from the second one on the line ends with *"(ponytailgaming's 3rd time in
+the stocks)"* — `ShowCount` turns that off. `CooldownSeconds` (15) silently ignores a pile-on,
+the same way `!bad` does.
+
+## Tucking in
+
+`commands/tuck.cs` sends a viewer off to bed. `!tuck @name` tucks them in with one of a handful
+of cosy tavern lines, picked at random; a bare `!tuck` (or tucking yourself in) is the asker
+heading to bed, so the tavern tucks *them* in instead. The name is checked and looked up the way
+`!hug` does it, so only a real Twitch user is ever posted. The lines are the `Lines` and
+`SelfLines` arrays at the top of the file.
 
 ## Lurking
 
