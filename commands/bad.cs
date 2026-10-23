@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Newtonsoft.Json;
 
-// Trigger: Twitch -> Command "!bad" (a Chat Message trigger works too). Chat-only by default —
+// Trigger: Twitch -> Command "!bad" (a Chat Message trigger works too). Chat-only —
 // a viewer watching you play badly presses one button and the bot says the quiet part.
 //
 //   !bad   -> one roast, picked at random, aimed at the broadcaster and nobody else
@@ -141,13 +140,6 @@ public class CPHInline
     // plays - so the ones after the first are ignored, silently. See the README.
     private const int CooldownSeconds = 45;
 
-    private const bool PostChatMessage = true;
-
-    // An overlay card as well as the chat line (src/alerts/). Off - a roast belongs in chat,
-    // where the person being roasted is already looking.
-    private const bool ShowOverlayCard = false;
-    private const int AlertMs = 7000;
-
     // How many of the most recent roasts are off the table when picking the next one. Keeps a
     // finite list from feeling finite. A value at or above the number of *eligible* lines would
     // leave nothing to pick, which Pick handles by forgetting and starting over — so the number
@@ -181,8 +173,7 @@ public class CPHInline
 
         CPH.SetGlobalVar(LastAtGlobal, DateTime.UtcNow.Ticks.ToString(), true);
 
-        if (PostChatMessage) CPH.SendMessage(line);
-        if (ShowOverlayCard) Broadcast(line);
+        CPH.SendMessage(line);
 
         return true;
     }
@@ -275,8 +266,7 @@ public class CPHInline
     /**
      * The category the channel is set to right now, or "" if this build won't say.
      *
-     * Found by shape rather than by name, for the reason shoutout.cs finds it that way:
-     * Streamer.bot hands CPH out as an interface and has renamed both the channel-info getter
+     * Found by shape rather than by name: Streamer.bot hands CPH out as an interface and has renamed both the channel-info getter
      * and its category property across versions, so any single-string method that looks like a
      * channel-info getter is tried, then any property on the result that looks like a category.
      *
@@ -320,20 +310,6 @@ public class CPHInline
         int count;
         int.TryParse(Convert.ToString(CPH.GetGlobalVar<object>(DeathCountVar, true)), out count);
         return count;
-    }
-
-    private void Broadcast(string line)
-    {
-        var payload = new Dictionary<string, object>
-        {
-            ["cmd"] = "alert",
-            ["id"] = "bad",
-            ["title"] = "Chat has notes",
-            ["body"] = line,
-            ["icon"] = "🔥",
-            ["ms"] = AlertMs
-        };
-        CPH.WebsocketBroadcastJson(JsonConvert.SerializeObject(payload));
     }
 
     // ---- Streamer.bot plumbing ------------------------------------------------------------

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Newtonsoft.Json;
 
 // Trigger: Twitch -> Command "!clip" (a Chat Message trigger works too). Open to everyone by
 // default; flip ModsOnly if chat gets carried away.
@@ -41,13 +40,6 @@ public class CPHInline
     // page, not to chat — and Twitch runs it through AutoMod and rejects what fails.
     private const bool AllowTitles = true;
     private const int MaxTitleLength = 100;
-
-    private const bool PostChatMessage = true;
-
-    // The overlay card. Off is a perfectly reasonable setting — the chat link is the payload,
-    // and the card is for the viewers who are watching rather than reading.
-    private const bool ShowOverlayCard = true;
-    private const int AlertMs = 8000;
 
     // Persisted so the last clip survives a Streamer.bot restart mid-stream — that is the link
     // someone always asks for again five minutes later.
@@ -139,8 +131,7 @@ public class CPHInline
         string note = optionsIgnored && askedForOptions
             ? " (this Streamer.bot can't set a clip's length or title yet, so it's 30s - update Streamer.bot for those)"
             : titleRefused ? " (Twitch didn't accept that title, so it's untitled)" : "";
-        if (PostChatMessage) CPH.SendMessage(user + " clipped it! " + url + note);
-        if (ShowOverlayCard) Broadcast(user, url);
+        CPH.SendMessage(user + " clipped it! " + url + note);
 
         return true;
     }
@@ -216,7 +207,7 @@ public class CPHInline
     /**
      * Cuts the clip, via whatever this Streamer.bot build calls the method.
      *
-     * Nothing is spelled out, for the reason shoutout.cs spells nothing out: the Twitch
+     * Nothing is spelled out, for the reason bad.cs spells nothing out: the Twitch
      * wrappers have been renamed across versions, and CPH is handed out as an interface, so a
      * method declared only there is not always reachable by exact name on the concrete type.
      * Unlike the getters elsewhere in this folder, this one is *meant* to be a mutator — which
@@ -338,33 +329,10 @@ public class CPHInline
         return "";
     }
 
-    private void Broadcast(string user, string url)
-    {
-        var payload = new Dictionary<string, object>
-        {
-            ["cmd"] = "alert",
-            ["id"] = "clip",
-            ["title"] = user + " clipped it!",
-            // The card is read at a glance from across a room, and the scheme is the one part
-            // of a url that never carries any information.
-            ["body"] = Strip(url),
-            ["icon"] = "🎬",
-            ["ms"] = AlertMs
-        };
-        CPH.WebsocketBroadcastJson(JsonConvert.SerializeObject(payload));
-    }
-
     // Only for the "it's on your clips page" fallback line, so a wrong guess is cosmetic.
     private string Broadcaster()
     {
         return Arg(new[] { "broadcastUserName", "broadcastUser", "channel" }, "yourchannel").ToLowerInvariant();
-    }
-
-    private string Strip(string url)
-    {
-        if (url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return url.Substring(8);
-        if (url.StartsWith("http://", StringComparison.OrdinalIgnoreCase)) return url.Substring(7);
-        return url;
     }
 
     // Explicit <T> required: this SB build only exposes GetGlobalVar<T>(string, bool), so the

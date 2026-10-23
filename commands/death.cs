@@ -27,7 +27,7 @@ using Newtonsoft.Json;
 // Each counter has a name — "hc-minecraft-all-bosses", "hc-wow" — and its own count, kept in
 // the persisted global death.saved.<name>, so switching games never loses a run. The current
 // one is death.run. death.count / death.label always mirror the current counter, which is what
-// bad.cs and the overlay read, so neither needs to know there is more than one.
+// bad.cs reads, so it doesn't need to know there is more than one.
 //
 // Everything on screen is a copy of the current count, written by Show() — by default an OBS
 // Text source, addressed by name over Streamer.bot's OBS connection. OBS saves a text source's
@@ -43,8 +43,8 @@ public class CPHInline
 
     // ---- where the number is shown --------------------------------------------------------
     //
-    // Two independent ways out, and neither is required — with both off, !death is a chat
-    // command that keeps a tally, which is a perfectly reasonable thing to want.
+    // Neither is required — with both off, !death is a chat command that keeps a tally, which
+    // is a perfectly reasonable thing to want.
 
     // An OBS Text source, written straight through Streamer.bot's OBS connection. The default
     // rig: no browser source, nothing to refresh, and OBS keeps the text in the scene
@@ -62,10 +62,6 @@ public class CPHInline
     // leaves {label} empty, so anything wrapped around it — " ({label})" — is trimmed off.
     private const string ObsTextFormat = "Deaths: {count}";
 
-    // The alerts overlay's corner counter (src/alerts/). Off by default: it is the second way
-    // to show the same number, and running both means two of them on screen.
-    private const bool ShowOnOverlay = false;
-
     // A plain text file for an OBS Text source with "Read from file" ticked. Empty means off.
     // The alternative to the OBS connection above rather than a companion to it — useful if
     // Streamer.bot is not connected to OBS, since a file needs no connection at all.
@@ -78,10 +74,7 @@ public class CPHInline
     // Twitch cuts a chat message off at 500 characters; `!deaths list` stops short of that.
     private const int MaxListLength = 450;
 
-    // The overlay keys its counters by name; this is the address the display is drawn under.
-    private const string CounterKey = "deaths";
-
-    // The current counter, mirrored for bad.cs and the overlay. Unset while hidden.
+    // The current counter, mirrored for bad.cs. Unset while hidden.
     private const string CountVar = "death.count";
     private const string LabelVar = "death.label";
 
@@ -349,7 +342,6 @@ public class CPHInline
         // Empty text renders as nothing, which is the whole trick — no scene item to hide, no
         // visibility to put back, and the source can stay in every scene it already sits in.
         Show("");
-        Broadcast("clear", 0, "");
         CPH.SendMessage("Death counter is off screen (" + Display(Active()) + " saved at " + CountOf(Active()) + "). !death or !death switch <name> brings it back.");
     }
 
@@ -420,7 +412,6 @@ public class CPHInline
         CPH.SetGlobalVar(CountVar, count, true);
         CPH.SetGlobalVar(LabelVar, Label(id), true);
         Show(Format(count, Label(id)));
-        Broadcast("set", count, Label(id));
     }
 
     /**
@@ -487,20 +478,6 @@ public class CPHInline
             // would say it on every single death. The SB log is where it belongs.
             CPH.LogWarn("[death] could not write " + TextFilePath + ": " + e.Message);
         }
-    }
-
-    private void Broadcast(string op, int count, string label)
-    {
-        if (!ShowOnOverlay) return;
-        var payload = new Dictionary<string, object>
-        {
-            ["cmd"] = "counter",
-            ["key"] = CounterKey,
-            ["op"] = op,
-            ["value"] = count,
-            ["label"] = label
-        };
-        CPH.WebsocketBroadcastJson(JsonConvert.SerializeObject(payload));
     }
 
     // ---- counters -------------------------------------------------------------------------

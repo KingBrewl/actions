@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 // Channel point reward: "First". Chat-only — greets whoever claimed it with an in-character
-// line and nothing goes over the websocket.
+// line.
 //
 // "Only the first person" is not this action's job: the reward itself is capped at one
 // redemption per stream (see the README), and Twitch enforces that server side, so there is

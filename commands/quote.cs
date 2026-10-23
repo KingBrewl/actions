@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 
 // Trigger: Twitch -> Command "!quote" (a Chat Message trigger works too). Chat-only — replies
-// with CPH.SendMessage, nothing goes over the websocket. Quotes live in persisted globals
+// with CPH.SendMessage. Quotes live in persisted globals
 // (quote_count plus quote_1..n), so they survive Streamer.bot restarts.
 //
 //   !quote              -> random quote      !quote add <text>  -> append (anyone)
