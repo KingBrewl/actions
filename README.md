@@ -32,6 +32,7 @@ When you change a file, paste it into its action again.
 | `commands/game.cs` | Command `!game` | Posts the current category |
 | `commands/lurk.cs` | Command `!lurk` and `!unlurk` in one trigger | `!unlurk` says how long they were away |
 | `commands/hug.cs` | Command `!hug` | Hugs `@name`, or the whole chat if no name is given |
+| `commands/pet.cs` | Command `!pet` | Gives `@name` gentle head pats. A bare `!pet` gets the asker pet |
 | `commands/tuck.cs` | Command `!tuck` | Tucks `@name` in for bed. A bare `!tuck` tucks in the asker |
 | `commands/pillory.cs` | Command `!pillory` | Puts `@name` in the stocks for a random crime, as a joke. Nobody is actually timed out |
 | `commands/quote.cs` | Command `!quote` | `!quote` shows a random quote, `!quote 5` shows quote 5, `!quote add <text>` adds one, and mods can `!quote remove 5` |
@@ -44,7 +45,7 @@ When you change a file, paste it into its action again.
 | `rewards/first.cs` | Channel point reward *First* | Greets the first person to redeem it each stream. See [Rewards](#rewards) |
 | `rewards/checkin.cs` | Channel point reward *Check-in*, **and** Twitch → Stream Online | Posts each viewer's arrival number and total visits. See [Rewards](#rewards) |
 
-When a command takes a name (`!hug`, `!tuck`, `!pillory`), the name must be a real Twitch user.
+When a command takes a name (`!hug`, `!pet`, `!tuck`, `!pillory`), the name must be a real Twitch user.
 That stops chat from making the bot post whatever text it likes.
 
 `!bad`, `!pillory`, `!clip` and `!letsgo` have built-in cooldowns. When several people type
