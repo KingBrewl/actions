@@ -35,7 +35,7 @@ When you change a file, paste it into its action again.
 | `commands/pet.cs` | Command `!pet` | Gives `@name` gentle head pats. A bare `!pet` gets the asker pet |
 | `commands/tuck.cs` | Command `!tuck` | Tucks `@name` in for bed. A bare `!tuck` tucks in the asker |
 | `commands/pillory.cs` | Command `!pillory` | Puts `@name` in the stocks for a random crime, as a joke. Nobody is actually timed out |
-| `commands/quote.cs` | Command `!quote` | `!quote` shows a random quote, `!quote 5` shows quote 5, `!quote add <text>` adds one, and mods can `!quote remove 5` |
+| `commands/quote.cs` | Command `!quote` | `!quote` shows a random quote, `!quote 5` shows quote 5, `!quote add <text>` adds one, and mods can `!quote remove 5`. Each new quote records the game you were playing, shown like `#3: "text" — KingBrewl, Elden Ring` |
 | `commands/bad.cs` | Command `!bad` | Roasts the streamer's gameplay with a random line |
 | `commands/clip.cs` | Command `!clip` | Makes a Twitch clip and posts the link. See [Clips](#clips) |
 | `commands/death.cs` | Command `!death` and `!deaths` in one trigger | Death counter shown in chat and on screen. See [Death counter](#death-counter) |
