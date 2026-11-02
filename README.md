@@ -17,7 +17,7 @@ file is one self-contained C# action, with no API keys or extra setup beyond wha
   of each file, so you can reword them, add to them or delete them.
 - **Settings.** Each file starts with a few settings (`ModsOnly`, `CooldownSeconds`, …). Each
   one has a comment saying what it does.
-- **`links.cs`** holds your Discord invite, socials and YouTube. Set them at the top of the file.
+- **`links.cs`** holds your Discord invite, socials, YouTube and the `!smp` message. Set them at the top of the file.
 - **`commands.cs`** is a hand-written list for `!commands`. Remove any commands you don't
   import, and add any new commands you write.
 
@@ -28,7 +28,7 @@ When you change a file, paste it into its action again.
 | File | Trigger | What it does |
 |---|---|---|
 | `commands/commands.cs` | Command `!commands` / `!cmds` / `!cmd` | Lists the commands the asker can use (mods and VIPs also see theirs) |
-| `commands/links.cs` | Command `!discord`, `!social` / `!socials`, `!youtube` / `!yt`, all in one trigger | Posts your links |
+| `commands/links.cs` | Command `!discord`, `!social` / `!socials`, `!youtube` / `!yt`, `!smp` / `!minecraft`, all in one trigger | Posts your links. `!smp` points chat to the Discord's #minecraft channel |
 | `commands/game.cs` | Command `!game` | Posts the current category |
 | `commands/lurk.cs` | Command `!lurk` and `!unlurk` in one trigger | `!unlurk` says how long they were away |
 | `commands/hug.cs` | Command `!hug` | Hugs `@name`, or the whole chat if no name is given |

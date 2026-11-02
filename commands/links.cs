@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 
-// Trigger: Twitch -> Command, with "!discord", "!social", "!socials", "!youtube" and "!yt" all
-// in the command box — one action serves every link command, the way !death and !deaths share
-// death.cs. Chat-only.
+// Trigger: Twitch -> Command, with "!discord", "!social", "!socials", "!youtube", "!yt", "!smp"
+// and "!minecraft" all in the command box — one action serves every link command, the way
+// !death and !deaths share death.cs. Chat-only.
 //
 //   !discord             -> the Discord invite
 //   !socials / !social   -> every social, one line
 //   !youtube / !yt       -> the YouTube channel
+//   !smp / !minecraft    -> how to join the Minecraft SMP (the Discord's #minecraft channel)
 //
 // Each link is written once, below, and every message that mentions it is built from that —
 // so a new Discord invite or a changed handle is a one-line edit.
@@ -32,6 +33,10 @@ public class CPHInline
     private static readonly string YouTubeLine =
         "Vault the archives! Catch game replays, high-scoring highlights, and full VODs over on YouTube at https://" + YouTube + " kingbre3Coin";
 
+    // The full how-to-join lives in the Discord, so chat only needs pointing there.
+    private static readonly string SmpLine =
+        "The Brewl Tavern has its own Minecraft SMP, and everyone's welcome! Join the Discord and check the #minecraft channel for how to get on: " + Discord + " kingbre3Crown";
+
     // Which message each command gets. Adding a command name here also needs it added to the
     // trigger's command box in Streamer.bot.
     private static readonly Dictionary<string, string> Commands = new Dictionary<string, string>
@@ -40,7 +45,9 @@ public class CPHInline
         ["social"] = SocialsLine,
         ["socials"] = SocialsLine,
         ["youtube"] = YouTubeLine,
-        ["yt"] = YouTubeLine
+        ["yt"] = YouTubeLine,
+        ["smp"] = SmpLine,
+        ["minecraft"] = SmpLine
     };
 
     public bool Execute()

@@ -24,6 +24,7 @@ public class CPHInline
         new object[] { "!discord", Everyone },
         new object[] { "!socials", Everyone },
         new object[] { "!youtube", Everyone },
+        new object[] { "!smp", Everyone },
         new object[] { "!lurk", Everyone },
         new object[] { "!unlurk", Everyone },
         new object[] { "!hug", Everyone },
