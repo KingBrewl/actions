@@ -34,6 +34,7 @@ public class CPHInline
         new object[] { "!quote", Everyone },
         new object[] { "!clip", Everyone },
         new object[] { "!bad", Everyone },
+        new object[] { "!oof", Everyone },
         new object[] { "!game", Everyone },
         new object[] { "!deaths", Everyone },
         new object[] { "!letsgo", Everyone },

@@ -37,6 +37,7 @@ When you change a file, paste it into its action again.
 | `commands/pillory.cs` | Command `!pillory` | Puts `@name` in the stocks for a random crime, as a joke. Nobody is actually timed out |
 | `commands/quote.cs` | Command `!quote` | `!quote` shows a random quote, `!quote 5` shows quote 5, `!quote add <text>` adds one, and mods can `!quote remove 5`. Each new quote records the game you were playing, shown like `#3: "text" — KingBrewl, Elden Ring` |
 | `commands/bad.cs` | Command `!bad` | Roasts the streamer's gameplay with a random line |
+| `commands/oof.cs` | Command `!oof` | Plays the oof sound. Mods and VIPs have no cooldown; everyone else shares a 1-minute one. Set `SoundFile` to your own sound file, which isn't included |
 | `commands/clip.cs` | Command `!clip` | Makes a Twitch clip and posts the link. See [Clips](#clips) |
 | `commands/death.cs` | Command `!death` and `!deaths` in one trigger | Death counter shown in chat and on screen. See [Death counter](#death-counter) |
 | `commands/letsgo.cs` | Command `!letsgo` / `!lg` | Counts "let's go"s for this stream and all time. See [Let's go](#lets-go) |
@@ -48,7 +49,7 @@ When you change a file, paste it into its action again.
 When a command takes a name (`!hug`, `!pet`, `!tuck`, `!pillory`), the name must be a real Twitch user.
 That stops chat from making the bot post whatever text it likes.
 
-`!bad`, `!pillory`, `!clip` and `!letsgo` have built-in cooldowns. When several people type
+`!bad`, `!pillory`, `!clip`, `!letsgo` and `!oof` have built-in cooldowns. When several people type
 the same command at once, it only fires once.
 
 ## Clips
