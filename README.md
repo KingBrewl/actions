@@ -11,7 +11,7 @@ file is one self-contained C# action, with no API keys or extra setup beyond wha
 
 ### Make it yours
 
-- **Emotes.** The messages use this channel's emotes (`kingbre3Heart`, `kingbre3LFG`, …). Swap
+- **Emotes.** The messages use this channel's emotes (`kingbre3Heart`, `kingbre3LetsGo`, …). Swap
   them for your own, or for plain emoji.
 - **Wording.** Most commands have a medieval tavern theme. The messages sit in lists near the top
   of each file, so you can reword them, add to them or delete them.

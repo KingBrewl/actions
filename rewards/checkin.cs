@@ -29,7 +29,7 @@ public class CPHInline
     // Visit counts that get a line of their own instead of the usual one.
     private static readonly Dictionary<int, string> VisitMilestones = new Dictionary<int, string>
     {
-        [10] = "{user} checks in for the 10th time! The barkeep has started pouring yours before you reach the bar. kingbre3Hello",
+        [10] = "{user} checks in for the 10th time! The barkeep has started pouring yours before you reach the bar. kingbre3Hi",
         [25] = "{user} checks in for the 25th time! There's a stool by the fire with your name carved in it now. kingbre3Crown",
         [50] = "{user} checks in for the 50th time! Fifty. The tavern would like to formally adopt you. kingbre3Crown",
         [100] = "{user} checks in for the 100th time! One hundred! Songs are being written. Some of them are even good. kingbre3Crown",
@@ -97,7 +97,7 @@ public class CPHInline
         // a refunded-and-redeemed-again, lands here rather than counting someone twice.
         if (lastStream == stream)
         {
-            CPH.SendMessage(user + ", you've already checked in tonight - the tavern remembers! kingbre3Hello");
+            CPH.SendMessage(user + ", you've already checked in tonight - the tavern remembers! kingbre3Hi");
             return;
         }
 
@@ -119,8 +119,8 @@ public class CPHInline
 
         string arrived = user + " is the " + Ordinal(arrivals) + " to check in tonight!";
         if (total == 1)
-            return arrived + " A new face at the Brewl Tavern - welcome, traveller, pull up a stool! kingbre3Hello";
-        return arrived + " Welcome back to the hearth - that's " + total + " visits all told. kingbre3Hello";
+            return arrived + " A new face at the Brewl Tavern - welcome, traveller, pull up a stool! kingbre3Hi";
+        return arrived + " Welcome back to the hearth - that's " + total + " visits all told. kingbre3Hi";
     }
 
     // A new stream: the stream number moves on, which is what "already checked in tonight" is

@@ -45,7 +45,7 @@ public class CPHInline
         if (login.Length > 0) CPH.UnsetTwitchUserVar(login, SinceVar, true);
 
         string after = away == null ? "" : " after " + Duration(away.Value);
-        CPH.SendMessage(user + " emerges from the tavern shadows" + after + " and steps back into the light! Welcome back to the hearth, hero—draw a blade and join the fray! kingbre3Hello");
+        CPH.SendMessage(user + " emerges from the tavern shadows" + after + " and steps back into the light! Welcome back to the hearth, hero—draw a blade and join the fray! kingbre3Hi");
     }
 
     // How long ago they lurked, or null when they didn't, the stored time is unreadable or

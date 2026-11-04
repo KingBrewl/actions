@@ -60,7 +60,7 @@ public class CPHInline
         var extra = Names(Vips, level);
 
         var parts = new List<string>();
-        parts.Add("kingbre3LFG Commands: " + string.Join(" ", everyone.ToArray()));
+        parts.Add("kingbre3LetsGo Commands: " + string.Join(" ", everyone.ToArray()));
         if (extra.Count > 0)
             parts.Add((level == Mods ? "Mods" : "VIPs") + ": " + string.Join(" ", extra.ToArray()));
         parts.Add(Footer);

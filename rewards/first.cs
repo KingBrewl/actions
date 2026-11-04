@@ -12,7 +12,7 @@ public class CPHInline
     public bool Execute()
     {
         string user = Arg(new[] { "userName", "user" }, "someone");
-        CPH.SendMessage(user + " is first through the tavern doors! The hearth is theirs to claim and the first round's on the house—raise a tankard, hero, the day's adventure begins! kingbre3Hello");
+        CPH.SendMessage(user + " is first through the tavern doors! The hearth is theirs to claim and the first round's on the house—raise a tankard, hero, the day's adventure begins! kingbre3Hi");
         return true;
     }
 
