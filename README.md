@@ -44,6 +44,7 @@ When you change a file, paste it into its action again.
 | `commands/raid.cs` | Command `!raid` | Posts a raid message for chat to copy, once with sub emotes and once with emoji |
 | `commands/shoutout.cs` | Command `!so` / `!shoutout` (mods, VIPs), and optionally Twitch → Raid | Posts a shoutout in chat and sends Twitch's own `/shoutout`. On a Raid trigger it shouts out the raider automatically |
 | `rewards/first.cs` | Channel point reward *First* | Greets the first person to redeem it each stream. See [Rewards](#rewards) |
+| `rewards/last.cs` | Channel point reward *Last* | "If you ain't first, you're last!" Names tonight's First winner, with its own joke if that winner redeems Last too. See [Rewards](#rewards) |
 | `rewards/checkin.cs` | Channel point reward *Check-in*, **and** Twitch → Stream Online | Posts each viewer's arrival number and total visits. See [Rewards](#rewards) |
 
 When a command takes a name (`!hug`, `!pet`, `!tuck`, `!pillory`), the name must be a real Twitch user.
@@ -102,19 +103,23 @@ special message. To show the count on screen, add an OBS Text source named `Lets
 
 ## Rewards
 
-Create both rewards **in Streamer.bot** (**Platforms → Twitch → Channel Point Rewards →
+Create the rewards **in Streamer.bot** (**Platforms → Twitch → Channel Point Rewards →
 right-click → Create Reward**), not on the Twitch dashboard. Twitch only lets the app that made a
 reward refund, edit or pause it.
 
-| | First | Check-in |
-|---|---|---|
-| Cost | 1 | Up to you — keep it cheap |
-| Limit | Max Per Stream: 1 | Max Per User Per Stream: 1 |
-| Skip Reward Requests Queue | on | on |
+| | First | Last | Check-in |
+|---|---|---|---|
+| Cost | 1 | Up to you — keep it cheap | Up to you — keep it cheap |
+| Limit | Max Per Stream: 1 | Max Per User Per Stream: 1 | Max Per User Per Stream: 1 |
+| Skip Reward Requests Queue | on | on | on |
 
 For Check-in, also attach the **Twitch → Stream Online** trigger, which starts a fresh count for
 each stream. If you go live again within 6 hours, for example after a crash, it counts as the
 same stream.
+
+Last gets the First winner from what `first.cs` saves, so paste the new `first.cs` in as well. It
+uses Check-in's stream count to tell tonight's First from an old one. Without Check-in it goes by
+time instead: a First claimed in the last 6 hours counts as tonight's.
 
 ## Adding your own commands
 
