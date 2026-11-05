@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 
 // Channel point reward: "Check-in". Chat-only — the arrival number, the viewer's visit count
-// and a tavern greeting. Any clip or alert on screen is Tangia's job: it sees the same
-// redemption from Twitch on its own, so nothing here talks to it. See the README.
+// and a tavern greeting. The video on screen is a Twitch alert, set up on the Twitch
+// dashboard: Twitch plays it for the redemption on its own, so nothing here talks to it.
+// See the README.
 //
 //   Ponytail is the 4th to check in tonight! Welcome back to the hearth - that's 12 visits all told.
 //
