@@ -81,7 +81,7 @@ public class CPHInline
         string title;
         if (!ParseOptions(raw, out seconds, out title))
         {
-            CPH.SendMessage(user + ", clips can be " + MinSeconds + " to " + MaxSeconds + " seconds long - e.g. !clip 15");
+            CPH.SendMessage(user + ", clips can be " + MinSeconds + "-" + MaxSeconds + " seconds, e.g. !clip 15");
             return true;
         }
 
@@ -116,10 +116,10 @@ public class CPHInline
             // the more expensive lie.
             if (clipMade)
             {
-                CPH.SendMessage(user + " clipped it! (couldn't read the link back - it's on twitch.tv/" + Broadcaster() + "/clips)");
+                CPH.SendMessage(user + " clipped it! Find it at twitch.tv/" + Broadcaster() + "/clips");
                 return true;
             }
-            CPH.SendMessage("Couldn't make a clip - Twitch only allows it while the stream is live.");
+            CPH.SendMessage("Couldn't clip - Twitch only allows clips while live.");
             return true;
         }
 
@@ -129,8 +129,8 @@ public class CPHInline
 
         bool askedForOptions = seconds != DefaultSeconds || title.Length > 0;
         string note = optionsIgnored && askedForOptions
-            ? " (this Streamer.bot can't set a clip's length or title yet, so it's 30s - update Streamer.bot for those)"
-            : titleRefused ? " (Twitch didn't accept that title, so it's untitled)" : "";
+            ? " (30s, untitled - update Streamer.bot to set length and title)"
+            : titleRefused ? " (Twitch rejected the title)" : "";
         CPH.SendMessage(user + " clipped it! " + url + note);
 
         return true;
@@ -175,7 +175,7 @@ public class CPHInline
     {
         CPH.SendMessage("!clip (last 30s) | !clip 15 or !clip 60 (any length, " + MinSeconds + "-" + MaxSeconds + "s)"
             + (AllowTitles ? " | !clip <title> | !clip 15 <title>" : "")
-            + " | !clip last (the latest link) - it clips what already happened, so clip right after the moment");
+            + " | !clip last (latest link). Clip right after the moment");
     }
 
     // The latest clip's link, whenever it was made — the cooldown doesn't apply to asking.

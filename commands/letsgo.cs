@@ -47,8 +47,8 @@ public class CPHInline
     {
         [100] = "kingbre3LetsGo LET'S GOOO #100! A hundred times, and every one of them meant.",
         [250] = "kingbre3LetsGo LET'S GOOO #250! At this point it's less a phrase and more a lifestyle.",
-        [500] = "kingbre3LetsGo LET'S GOOO #500! Five hundred. The tavern is engraving it over the door.",
-        [1000] = "kingbre3LetsGo LET'S GOOO #1,000! One thousand. Bards will sing of this. Loudly. Probably saying let's go.",
+        [500] = "kingbre3LetsGo LET'S GOOO #500! The tavern is engraving it over the door.",
+        [1000] = "kingbre3LetsGo LET'S GOOO #1,000! Bards will sing of this. Loudly. kingbre3Dance",
         [5000] = "kingbre3LetsGo LET'S GOOO #5,000! Linguists are now studying this channel."
     };
 
@@ -163,7 +163,7 @@ public class CPHInline
     private static readonly Dictionary<string, string> HelpTopics = new Dictionary<string, string>
     {
         ["add"] = "!letsgo counts one let's go - anyone can use it. If a few people type it at once, it only counts once.",
-        ["count"] = "!letsgo count shows this stream's let's go count and the all-time count, without adding one.",
+        ["count"] = "!letsgo count shows this stream's and the all-time count without adding one.",
         ["undo"] = "!letsgo undo takes one let's go back, for a miscount. Mods and VIPs.",
         ["set"] = "!letsgo set <n> sets this stream's count exactly. The all-time count isn't touched. Mods and VIPs.",
         ["setall"] = "!letsgo setall <n> sets the all-time count exactly. This stream's count isn't touched. Mods and VIPs."
@@ -194,7 +194,7 @@ public class CPHInline
 
         CPH.SendMessage(CanEdit()
             ? "!letsgo or !lg (+1, anyone) | !letsgo count | !letsgo undo | !letsgo set <n> (this stream) | !letsgo setall <n> (all time) - !letsgo help <command> for more"
-            : "Hear a let's go? Type !letsgo (or !lg) to count it! !letsgo count shows the score - !letsgo help <command> for more");
+            : "Hear a let's go? Type !letsgo (or !lg)! !letsgo count shows the score - !letsgo help <command> for more");
     }
 
     // ---- display --------------------------------------------------------------------------

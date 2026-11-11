@@ -36,7 +36,7 @@ public class CPHInline
         if (login.Length > 0 && Since(login) == null)
             CPH.SetTwitchUserVar(login, SinceVar, DateTime.UtcNow.Ticks.ToString(), true);
 
-        CPH.SendMessage("Step into the shadows of the Tavern, " + user + "! Pull up a stool by the fire—your stealthy presence keeps the hearth burning brightly. kingbre3PayRespects");
+        CPH.SendMessage("Into the tavern shadows, " + user + "! Your stool by the fire is saved. kingbre3Lurk");
     }
 
     private void Unlurk(string user, string login)
@@ -45,7 +45,7 @@ public class CPHInline
         if (login.Length > 0) CPH.UnsetTwitchUserVar(login, SinceVar, true);
 
         string after = away == null ? "" : " after " + Duration(away.Value);
-        CPH.SendMessage(user + " emerges from the tavern shadows" + after + " and steps back into the light! Welcome back to the hearth, hero—draw a blade and join the fray! kingbre3Hi");
+        CPH.SendMessage(user + " steps out of the shadows" + after + "! Welcome back to the hearth, hero. kingbre3Howdy");
     }
 
     // How long ago they lurked, or null when they didn't, the stored time is unreadable or

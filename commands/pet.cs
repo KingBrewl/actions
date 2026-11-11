@@ -20,20 +20,20 @@ public class CPHInline
      * ----------------------------------------------------------------------------------- */
     private static readonly string[] Lines =
     {
-        "{user} gently pats {target} on the head. Good adventurer. The best adventurer. kingbre3Heart",
-        "{user} slips off a gauntlet and gives {target} the softest head pats in the whole realm. kingbre3Heart",
-        "{user} ruffles {target}'s hair and tells them they did a wonderful job today. You did, {target}. kingbre3Heart",
-        "{user} gives {target} slow, loving head pats until every worry from the road melts away. kingbre3Heart",
-        "{user} pats {target} on the head and slides them the last honey cake from the tavern kitchen. You've earned it. kingbre3Heart",
-        "{user} reaches over and pets {target} like the precious tavern cat they are. Purring is allowed. kingbre3Heart",
-        "{user} gives {target} a pat on the head and a proud nod. The whole tavern is glad you're here, {target}. kingbre3Heart"
+        "{user} pats {target} on the head. Good adventurer. The best adventurer. kingbre3Heart",
+        "{user} slips off a gauntlet and gives {target} the softest head pats in the realm. kingbre3Heart",
+        "{user} ruffles {target}'s hair. You did wonderfully today, {target}. kingbre3Heart",
+        "{user} gives {target} slow head pats until every worry from the road melts away. kingbre3Heart",
+        "{user} pats {target} on the head and slides them the last honey cake. You've earned it. kingbre3Heart",
+        "{user} pets {target} like the precious tavern cat they are. Purring is allowed. kingbre3Heart",
+        "{user} pats {target} on the head. The whole tavern is glad you're here. kingbre3Heart"
     };
 
     private static readonly string[] SelfLines =
     {
-        "The tavern keeper leans over the bar and gives {user} a warm pat on the head. You're doing great, hero. kingbre3Heart",
-        "The tavern cat hops into {user}'s lap and headbutts their hand until they get the pets they deserve. kingbre3Heart",
-        "Chat lines up to give {user} gentle head pats, one by one. Everyone deserves some love. kingbre3Heart"
+        "The tavern keeper leans over the bar and pats {user} on the head. You're doing great, hero. kingbre3Heart",
+        "The tavern cat headbutts {user}'s hand until they get the pets they deserve. kingbre3Heart",
+        "Chat lines up to give {user} gentle head pats. Everyone deserves some love. kingbre3Heart"
     };
 
     private static readonly Random Rng = new Random();

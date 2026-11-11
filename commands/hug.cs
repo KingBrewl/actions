@@ -27,11 +27,11 @@ public class CPHInline
         }
 
         if (target.Length == 0)
-            CPH.SendMessage(user + " throws open their arms and pulls the whole tavern into a heavy, armor-clanking group hug! May your health bars stay full and your shields hold strong. kingbre3Heart");
+            CPH.SendMessage(user + " pulls the whole tavern into an armor-clanking group hug! May your health bars stay full. kingbre3Heart");
         else if (target.ToLowerInvariant() == login || target.ToLowerInvariant() == user.ToLowerInvariant())
-            CPH.SendMessage(user + " wraps themselves in a heavy, armor-clanking hug. Even heroes need one sometimes - may your health bar stay full and your shield hold strong. kingbre3Heart");
+            CPH.SendMessage(user + " gives themselves an armor-clanking hug. Even heroes need one. kingbre3Heart");
         else
-            CPH.SendMessage(user + " pulls " + target + " close into a heavy, tavern-side armor hug! May your health bars stay full and your shields hold strong. kingbre3Heart");
+            CPH.SendMessage(user + " pulls " + target + " into an armor-clanking hug! May your health bar stay full. kingbre3Heart");
 
         return true;
     }

@@ -22,14 +22,14 @@ public class CPHInline
      * ----------------------------------------------------------------------------------- */
     private static readonly string[] Lines =
     {
-        "{user} drags {target} to the town square and locks them in the pillory for {crime}! Sentence: {sentence}. Chat, ready your tomatoes. 🍅",
-        "HEAR YE, HEAR YE! {target} stands accused of {crime}. {user} has seen enough - to the stocks with them, for {sentence}! 🍅",
-        "The tavern falls silent as {user} points at {target}. The charge: {crime}. The punishment: the pillory, for {sentence}. 🍅",
-        "By order of {user}, {target} is clapped in the stocks for {crime}. They shall remain there for {sentence}. Throw responsibly. 🍅",
-        "{target} has been found guilty of {crime} in the court of {user}. Off to the pillory for {sentence}! 🍅",
-        "The town crier rings the bell: {target}, for {crime}, is sentenced by {user} to {sentence} in the stocks. 🍅",
-        "{user} files the paperwork. {target} - {crime}. Verdict: guilty. Sentence: {sentence} in the pillory. Next! 🍅",
-        "Seize them! {user} has caught {target} red-handed in the act of {crime}. The pillory awaits, for {sentence}. 🍅"
+        "{user} locks {target} in the pillory for {crime}! Sentence: {sentence}. Ready your tomatoes. 🍅",
+        "HEAR YE! {user} accuses {target} of {crime}. To the stocks! Sentence: {sentence}. 🍅",
+        "The tavern falls silent as {user} points at {target}. The charge: {crime}. The sentence: {sentence}. 🍅",
+        "By order of {user}, {target} is clapped in the stocks for {crime}. Sentence: {sentence}. Throw responsibly. 🍅",
+        "The court of {user} finds {target} guilty of {crime}. Off to the pillory! Sentence: {sentence}. 🍅",
+        "The town crier rings the bell: {user} sends {target} to the stocks for {crime}. Sentence: {sentence}. 🍅",
+        "{user} files the paperwork. {target} - {crime}. Verdict: guilty. Sentence: {sentence}. Next! 🍅",
+        "Seize them! {user} caught {target} red-handed: {crime}. Sentence: {sentence} in the pillory. 🍅"
     };
 
     private static readonly string[] Crimes =
@@ -75,7 +75,7 @@ public class CPHInline
     };
 
     // A lone line for pillorying yourself - no crime picked, they've confessed to something.
-    private const string SelfLine = "{user} walks into the town square, locks THEMSELVES in the pillory, and asks chat to throw gently. Respect the honesty. kingbre3PayRespects";
+    private const string SelfLine = "{user} locks THEMSELVES in the pillory and asks chat to throw gently. Respect the honesty. kingbre3Lol";
 
     private static readonly Random Rng = new Random();
 

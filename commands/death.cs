@@ -177,16 +177,16 @@ public class CPHInline
     // points at the same entry, so `!death help oops` is answered too.
     private static readonly Dictionary<string, string> HelpTopics = new Dictionary<string, string>
     {
-        ["add"] = "!death adds one death to the current counter. !death 3 adds three, for a spiral nobody was counting through.",
+        ["add"] = "!death adds one death. !death 3 adds three, for a spiral nobody was counting through.",
         ["undo"] = "!death undo (or -1, oops) takes one death back, for a misfire.",
-        ["set"] = "!death set <n> sets the count exactly, e.g. after counting off-stream. A bare number like !death 12 adds 12 instead.",
-        ["switch"] = "!death switch <name> changes to another counter, or starts a new one at 0. The one you leave keeps its count. e.g. !death switch hc-wow",
-        ["reset"] = "!death reset puts the current counter back to 0. !death reset <name> zeroes (or starts) that counter and switches to it - the one you leave is saved.",
+        ["set"] = "!death set <n> sets the exact count. A bare number like !death 12 adds 12 instead.",
+        ["switch"] = "!death switch <name> changes to another counter, or starts a new one at 0. The old one keeps its count. e.g. !death switch hc-wow",
+        ["reset"] = "!death reset zeroes the current counter. !death reset <name> zeroes (or starts) that counter and switches to it.",
         ["rename"] = "!death rename <name> renames the current counter and keeps its count. Names are lowercase with dashes: \"HC WoW\" becomes hc-wow.",
         ["forget"] = "!death forget <name> deletes an old counter for good. It won't delete the current one - switch away first.",
-        ["hide"] = "!death hide takes the counter off screen. Nothing is lost - the next !death brings it back where it was.",
+        ["hide"] = "!death hide takes the counter off screen. Nothing is lost - the next !death brings it back.",
         ["list"] = "!deaths list shows every counter and its count. !deaths <name> shows one counter without switching to it.",
-        ["deaths"] = "!deaths shows the current count. Anyone can use it, and it never changes anything."
+        ["deaths"] = "!deaths shows the current count. Anyone can use it."
     };
 
     private static readonly Dictionary<string, string> HelpAliases = new Dictionary<string, string>
@@ -216,9 +216,9 @@ public class CPHInline
         }
 
         if (CanEdit())
-            CPH.SendMessage("kingbre3PayRespects !death (+1) | !death 3 (+3) | !death undo | !death set <n> | !death switch <name> | !death reset [name] | !death rename <name> | !death forget <name> | !death hide | !deaths [name|list] — !death help <command> for more");
+            CPH.SendMessage("kingbre3O7 !death (+1) | !death 3 (+3) | !death undo | !death set <n> | !death switch <name> | !death reset [name] | !death rename <name> | !death forget <name> | !death hide | !deaths [name|list] — !death help <command> for more");
         else
-            CPH.SendMessage("kingbre3PayRespects !deaths shows the count | !deaths <name> shows another counter | !deaths list shows them all. Mods" + (VipsCanEdit ? " and VIPs" : "") + " keep score with !death — !death help <command> for more");
+            CPH.SendMessage("kingbre3O7 !deaths shows the count | !deaths <name> shows another counter | !deaths list shows them all. Mods" + (VipsCanEdit ? " and VIPs" : "") + " keep score with !death — !death help <command> for more");
     }
 
     private void Add(int delta, string user)
@@ -232,8 +232,8 @@ public class CPHInline
         Store(count);
 
         if (delta < 0) CPH.SendMessage("Un-died. Back to " + count + Suffix(Active()));
-        else if (delta > 1) CPH.SendMessage("kingbre3PayRespects +" + delta + " — that's " + count + " now" + Suffix(Active()));
-        else CPH.SendMessage("kingbre3PayRespects Death #" + count + Suffix(Active()));
+        else if (delta > 1) CPH.SendMessage("kingbre3O7 +" + delta + " — that's " + count + " now" + Suffix(Active()));
+        else CPH.SendMessage("kingbre3O7 Death #" + count + Suffix(Active()));
     }
 
     private void Set(int n, string user)
@@ -342,7 +342,7 @@ public class CPHInline
         // Empty text renders as nothing, which is the whole trick — no scene item to hide, no
         // visibility to put back, and the source can stay in every scene it already sits in.
         Show("");
-        CPH.SendMessage("Death counter is off screen (" + Display(Active()) + " saved at " + CountOf(Active()) + "). !death or !death switch <name> brings it back.");
+        CPH.SendMessage("Death counter hidden (" + Display(Active()) + " saved at " + CountOf(Active()) + "). !death brings it back.");
     }
 
     private void Report(string id)
@@ -354,7 +354,7 @@ public class CPHInline
         }
         int count = CountOf(id);
         if (count == 0) { CPH.SendMessage("No deaths yet" + Suffix(id) + ". Suspicious."); return; }
-        CPH.SendMessage("kingbre3PayRespects " + count + (count == 1 ? " death" : " deaths") + " so far" + Suffix(id));
+        CPH.SendMessage("kingbre3O7 " + count + (count == 1 ? " death" : " deaths") + " so far" + Suffix(id));
     }
 
     private void List()
@@ -363,7 +363,7 @@ public class CPHInline
         if (runs.Count == 0) { CPH.SendMessage("No death counters yet - !death starts one"); return; }
 
         string active = Active();
-        var line = "kingbre3PayRespects Death counters:";
+        var line = "kingbre3O7 Death counters:";
         foreach (string id in runs)
         {
             string entry = " " + Display(id) + " " + CountOf(id) + (id == active ? " (current)" : "") + ",";

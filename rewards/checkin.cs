@@ -30,11 +30,11 @@ public class CPHInline
     // Visit counts that get a line of their own instead of the usual one.
     private static readonly Dictionary<int, string> VisitMilestones = new Dictionary<int, string>
     {
-        [10] = "{user} checks in for the 10th time! The barkeep has started pouring yours before you reach the bar. kingbre3Hi",
-        [25] = "{user} checks in for the 25th time! There's a stool by the fire with your name carved in it now. kingbre3Crown",
-        [50] = "{user} checks in for the 50th time! Fifty. The tavern would like to formally adopt you. kingbre3Crown",
-        [100] = "{user} checks in for the 100th time! One hundred! Songs are being written. Some of them are even good. kingbre3Crown",
-        [250] = "{user} checks in for the 250th time! You don't visit the tavern - you ARE the tavern. kingbre3Crown"
+        [10] = "{user} checks in for the 10th time! The barkeep pours yours before you reach the bar. kingbre3Howdy",
+        [25] = "{user} checks in for the 25th time! There's a stool by the fire with your name carved in it. kingbre3King",
+        [50] = "{user} checks in for the 50th time! The tavern would like to formally adopt you. kingbre3Heart",
+        [100] = "{user} checks in for the 100th time! Songs are being written. Some are even good. kingbre3King",
+        [250] = "{user} checks in for the 250th time! You don't visit the tavern - you ARE the tavern. kingbre3Golden"
     };
 
     // The channel-wide state: which stream this is, how many have checked in during it, and
@@ -98,7 +98,7 @@ public class CPHInline
         // a refunded-and-redeemed-again, lands here rather than counting someone twice.
         if (lastStream == stream)
         {
-            CPH.SendMessage(user + ", you've already checked in tonight - the tavern remembers! kingbre3Hi");
+            CPH.SendMessage(user + ", you've already checked in tonight - the tavern remembers! kingbre3Howdy");
             return;
         }
 
@@ -120,8 +120,8 @@ public class CPHInline
 
         string arrived = user + " is the " + Ordinal(arrivals) + " to check in tonight!";
         if (total == 1)
-            return arrived + " A new face at the Brewl Tavern - welcome, traveller, pull up a stool! kingbre3Hi";
-        return arrived + " Welcome back to the hearth - that's " + total + " visits all told. kingbre3Hi";
+            return arrived + " Welcome to the Brewl Tavern, traveller! kingbre3Howdy";
+        return arrived + " Welcome back - that's " + total + " visits. kingbre3Howdy";
     }
 
     // A new stream: the stream number moves on, which is what "already checked in tonight" is

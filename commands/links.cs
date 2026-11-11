@@ -25,17 +25,17 @@ public class CPHInline
     // ---- the messages ---------------------------------------------------------------------
 
     private static readonly string DiscordLine =
-        "Pull up a stool at The Brewl Tavern! " + Discord + " kingbre3Crown";
+        "Pull up a stool at The Brewl Tavern! " + Discord + " kingbre3King";
 
     private static readonly string SocialsLine =
         YouTube + " | " + TikTok + " | " + X + " | " + Instagram;
 
     private static readonly string YouTubeLine =
-        "Vault the archives! Catch game replays, high-scoring highlights, and full VODs over on YouTube at https://" + YouTube + " kingbre3Coin";
+        "To the archives! Replays, highlights and full VODs at https://" + YouTube + " kingbre3Cool";
 
     // The full how-to-join lives in the Discord, so chat only needs pointing there.
     private static readonly string SmpLine =
-        "The Brewl Tavern has its own Minecraft SMP, and everyone's welcome! Join the Discord and check the #minecraft channel for how to get on: " + Discord + " kingbre3Crown";
+        "The Brewl Tavern has its own Minecraft SMP, and all are welcome! See #minecraft on the Discord: " + Discord + " kingbre3King";
 
     // Which message each command gets. Adding a command name here also needs it added to the
     // trigger's command box in Streamer.bot.

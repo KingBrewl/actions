@@ -28,22 +28,22 @@ public class CPHInline
     {
         "{user} stumbles in behind {first}, who claimed the hearth ages ago. If you ain't first, you're last! kingbre3Hi",
         "{user} arrives to find {first}'s tankard already empty. If you ain't first, you're last!",
-        "{first} took the best stool, the warmest spot and the first round. {user} gets the draughty corner by the door. If you ain't first, you're last!",
+        "{first} took the best stool and the first round. {user} gets the draughty corner. If you ain't first, you're last!",
         "The bard has already written a song about {first}. {user} gets a footnote. If you ain't first, you're last!",
-        "{user} bursts through the tavern doors to a standing ovation... for {first}, who got here first. If you ain't first, you're last!"
+        "{user} bursts in to a standing ovation... for {first}, who got here first. If you ain't first, you're last!"
     };
 
     // Nobody has claimed First tonight. {user} is the redeemer.
     private static readonly string[] NoFirstLines =
     {
-        "{user} redeemed Last when nobody's even claimed First yet. Bold strategy. The hearth is still up for grabs!",
+        "{user} redeemed Last before anyone claimed First. Bold strategy. The hearth is still up for grabs!",
         "{user} is last... out of nobody? The First reward is sitting right there, friend."
     };
 
     // The First winner redeeming Last as well. {user} is them.
     private static readonly string[] BothLines =
     {
-        "{user} claimed First AND Last?! You can't be first and last, that's not how lines work. The barkeep is very confused.",
+        "{user} claimed First AND Last?! That's not how lines work. The barkeep is very confused.",
         "{user} has lapped the entire tavern. First through the door, last through the door. Make up your mind!",
         "{user}, you were FIRST. Why are you in the back of the queue? Get back to your hearth!",
         "{user} walked in first, walked out, and walked in again last. The bouncer has questions."
@@ -75,7 +75,7 @@ public class CPHInline
         {
             // A viewer who spent their points still gets a line.
             CPH.LogWarn("[last] failed: " + error);
-            CPH.SendMessage(user + " is last! If you ain't first, you're last!");
+            CPH.SendMessage(user + " is last! If you ain't first, you're last! kingbre3Hi");
         }
         return true;
     }

@@ -46,7 +46,7 @@ public class CPHInline
     };
 
     // The commands with a help of their own, pointed at on the end of the line.
-    private const string Footer = "!death help and !letsgo help explain more";
+    private const string Footer = "More: !clip help, !death help, !letsgo help";
 
     // Twitch cuts a chat message off at 500 characters. A list longer than this is sent as more
     // than one message rather than losing its tail.

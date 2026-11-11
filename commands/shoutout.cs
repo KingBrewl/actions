@@ -52,9 +52,7 @@ public class CPHInline
         if (PostChatMessage)
         {
             CPH.SendMessage(
-                "Draw your weapons and raise a toast for " + name +
-                "! Go pledge your allegiance and check out their legend over at https://twitch.tv/" + handle +
-                " kingbre3Crown");
+                "Raise a toast to " + name + "! Go check out their legend at https://twitch.tv/" + handle + " kingbre3King");
         }
 
         // Last, and swallowed: Twitch rejects a second /shoutout inside its cooldown as a matter

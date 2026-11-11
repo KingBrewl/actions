@@ -4,7 +4,7 @@ using System.Reflection;
 
 // Trigger: Twitch -> Command "!game" (a Chat Message trigger works too). Chat-only.
 //
-//   !game   -> "KingBrewl is currently braving the dangerous realms of Elden Ring! ..."
+//   !game   -> "KingBrewl is braving the realms of Elden Ring! ..."
 //
 // The category is read live from Twitch through Streamer.bot's own credentials, found by
 // shape exactly the way bad.cs finds it — so a %gameName% argument from some earlier
@@ -17,9 +17,9 @@ public class CPHInline
         if (game.Length == 0) game = CurrentGame();
 
         if (game.Length == 0)
-            CPH.SendMessage("Even the tavern's mapmakers can't say which realm KingBrewl is braving right now. kingbre3PayRespects");
+            CPH.SendMessage("Even the tavern's mapmakers don't know which realm KingBrewl is in. kingbre3Lol");
         else
-            CPH.SendMessage("KingBrewl is currently braving the dangerous realms of " + game + "! Gear up and prepare for battle. kingbre3PayRespects");
+            CPH.SendMessage("KingBrewl is braving the realms of " + game + "! Gear up, adventurers. kingbre3Pew");
         return true;
     }
 

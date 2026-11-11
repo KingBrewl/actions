@@ -8,7 +8,7 @@ using System.Collections.Generic;
 //   2. with emoji, which anyone can paste anywhere
 //
 // Two versions because channel emotes only work in someone else's chat for subscribers: a
-// non-sub pasting the emote version posts the literal word "kingbre3Crown". Each line is just
+// non-sub pasting the emote version posts the literal word "kingbre3LetsGo". Each line is just
 // the message with no label in front, so the whole chat line is the thing to copy — the emotes
 // rendering in one of them is what tells the two apart.
 public class CPHInline
@@ -16,8 +16,8 @@ public class CPHInline
     // Off: anyone can post it. On if chat starts posting it when there's no raid.
     private const bool ModsOnly = false;
 
-    private const string SubRaidCall = "kingbre3Crown The tavern doors burst open and the Brewl Kingdom rides in! Tankards up, we come bearing gold and good cheer! kingbre3Coin KINGBREWL RAID kingbre3Coin";
-    private const string RaidCall = "👑 The tavern doors burst open and the Brewl Kingdom rides in! Tankards up, we come bearing gold and good cheer! 🍺 KINGBREWL RAID 🍺";
+    private const string SubRaidCall = "kingbre3LetsGo The tavern doors burst open and the Brewl Kingdom rides in! Tankards up! kingbre3Pew KINGBREWL RAID kingbre3Pew";
+    private const string RaidCall = "👑 The tavern doors burst open and the Brewl Kingdom rides in! Tankards up! 🍺 KINGBREWL RAID 🍺";
 
     public bool Execute()
     {

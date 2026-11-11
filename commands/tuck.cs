@@ -20,19 +20,19 @@ public class CPHInline
      * ----------------------------------------------------------------------------------- */
     private static readonly string[] Lines =
     {
-        "{user} tucks {target} into a straw bed by the tavern hearth and blows out the candle. Sleep well, hero. kingbre3Heart",
-        "{user} pulls a thick wool blanket up to {target}'s chin and props their sword by the door. Rest easy - the night watch has it from here. kingbre3Heart",
-        "{user} fluffs {target}'s pillow, leaves a mug of warm milk on the nightstand and tiptoes out. Goodnight, {target}! kingbre3Heart",
-        "{user} tucks {target} in tight and checks under the bed for goblins. All clear. Sweet dreams! kingbre3Heart",
-        "{user} wraps {target} up like a tavern burrito and hums the bard's lullaby. Off to dreamland with you. kingbre3Heart",
-        "{user} sets {target}'s armor on the stand, tucks them in and promises to save them a seat by the fire tomorrow. Goodnight! kingbre3Heart"
+        "{user} tucks {target} into a straw bed by the hearth and blows out the candle. Sleep well, hero. kingbre3Heart",
+        "{user} pulls a wool blanket up to {target}'s chin. Rest easy - the night watch has it from here. kingbre3Heart",
+        "{user} fluffs {target}'s pillow, leaves some warm milk and tiptoes out. Goodnight, {target}! kingbre3Heart",
+        "{user} tucks {target} in and checks under the bed for goblins. All clear. Sweet dreams! kingbre3Heart",
+        "{user} wraps {target} up like a tavern burrito and hums the bard's lullaby. kingbre3Heart",
+        "{user} hangs up {target}'s armor and tucks them in. Your seat by the fire is saved for tomorrow. kingbre3Heart"
     };
 
     private static readonly string[] SelfLines =
     {
-        "The tavern keeper tucks {user} into the warmest bed upstairs and dims the lanterns. Sleep well, hero - we'll keep the fire going. kingbre3Heart",
-        "Chat pulls the blankets up over {user} and the bard plays something soft. Goodnight, {user}! kingbre3Heart",
-        "{user} heads up the creaky stairs to bed. The whole tavern waves goodnight - rest up for the next adventure! kingbre3Heart"
+        "The tavern keeper tucks {user} into the warmest bed upstairs. Sleep well, hero - we'll keep the fire going. kingbre3Heart",
+        "Chat pulls the blankets over {user} as the bard plays something soft. Goodnight! kingbre3Heart",
+        "{user} heads up the creaky stairs to bed. The whole tavern waves goodnight! kingbre3Heart"
     };
 
     private static readonly Random Rng = new Random();
