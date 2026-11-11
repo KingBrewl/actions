@@ -9,6 +9,8 @@ using System.Reflection;
 //
 //   !quote              -> random quote      !quote add <text>  -> append (anyone)
 //   !quote <n>          -> quote number n    !quote remove <n>  -> delete (mods only)
+//   !quote game         -> list quotes with no game (mods only)
+//   !quote game <n> <game> -> set quote n's game (mods only)
 //
 // A quote is shown as: #3: "text" — KingBrewl, Elden Ring. Quotes saved while Twitch couldn't
 // say what was being played are shown without the game: #3: "text" — KingBrewl.
@@ -40,8 +42,9 @@ public class CPHInline
         if (lower.StartsWith("add ")) { Add(raw.Substring(4).Trim(), user); return true; }
         if (lower.StartsWith("remove ")) { Remove(TailNumber(raw, 7), user); return true; }
         if (lower.StartsWith("delete ")) { Remove(TailNumber(raw, 7), user); return true; }
+        if (lower == "game" || lower.StartsWith("game ")) { SetGame(raw.Substring(4).Trim(), user); return true; }
 
-        CPH.SendMessage(user + ", usage: !quote | !quote <#> | !quote add <text> | !quote remove <#>");
+        CPH.SendMessage(user + ", usage: !quote | !quote <#> | !quote add <text> | !quote remove <#> | !quote game <#> <game>");
         return true;
     }
 
@@ -86,6 +89,55 @@ public class CPHInline
         CPH.SetGlobalVar("quote_game_" + count, "");
         CPH.SetGlobalVar("quote_count", count - 1);
         CPH.SendMessage("Removed quote #" + n + " (" + (count - 1) + " left)");
+    }
+
+    // Mods only. "!quote game" lists the quotes with no game; "!quote game 5 Elden Ring" sets
+    // quote #5's game, for backfilling quotes saved before the game was recorded (or fixing one
+    // saved under the wrong category).
+    private void SetGame(string rest, string user)
+    {
+        if (!Flag(new[] { "isBroadcaster", "broadcaster", "isModerator", "moderator" }))
+        {
+            CPH.SendMessage(user + ", only mods can set a quote's game");
+            return;
+        }
+        int count = GetCount();
+
+        if (rest.Length == 0)
+        {
+            var missing = new List<string>();
+            for (int i = 1; i <= count; i++)
+                if (Game(i).Length == 0) missing.Add("#" + i);
+            if (missing.Count == 0) { CPH.SendMessage("Every quote has a game"); return; }
+
+            // Twitch cuts messages off at 500 characters.
+            string list = "";
+            int shown = 0;
+            foreach (string item in missing)
+            {
+                if (list.Length + item.Length > 400) break;
+                list += (shown == 0 ? "" : ", ") + item;
+                shown++;
+            }
+            if (shown < missing.Count) list += " and " + (missing.Count - shown) + " more";
+            CPH.SendMessage("Quotes with no game: " + list + ". Set one with \"!quote game <#> <game>\"");
+            return;
+        }
+
+        int space = rest.IndexOf(' ');
+        int n;
+        if (space < 0 || !int.TryParse(rest.Substring(0, space).TrimStart('#'), out n))
+        {
+            CPH.SendMessage(user + ", usage: !quote game <#> <game>");
+            return;
+        }
+        string game = rest.Substring(space + 1).Trim();
+        if (game.Length == 0) { CPH.SendMessage(user + ", usage: !quote game <#> <game>"); return; }
+        if (game.Length > 100) { CPH.SendMessage("That game name's too long - keep it under 100 characters"); return; }
+        if (n < 1 || n > count) { CPH.SendMessage("There is no quote #" + n + " - we only have " + count); return; }
+
+        CPH.SetGlobalVar("quote_game_" + n, game);
+        CPH.SendMessage("Quote #" + n + " is now from " + game);
     }
 
     private int TailNumber(string raw, int skip)
