@@ -1,6 +1,6 @@
 # Streamer.bot actions
 
-Twitch chat commands and channel point rewards for [Streamer.bot](https://streamer.bot). Each
+Twitch chat commands, channel point rewards and alerts for [Streamer.bot](https://streamer.bot). Each
 file is one self-contained C# action, with no API keys or extra setup beyond what's listed below.
 
 ## Setup
@@ -17,7 +17,7 @@ file is one self-contained C# action, with no API keys or extra setup beyond wha
   of each file, so you can reword them, add to them or delete them.
 - **Settings.** Each file starts with a few settings (`ModsOnly`, `CooldownSeconds`, …). Each
   one has a comment saying what it does.
-- **`links.cs`** holds your Discord invite, socials, YouTube and the `!smp` message. Set them at the top of the file.
+- **`links.cs`** holds your Discord invite, socials, YouTube and the `!smp` message. Set them at the top of the file. `alerts/discord.cs` has its own copy of the Discord invite, so update it there too.
 - **`commands.cs`** is a hand-written list for `!commands`. Remove any commands you don't
   import, and add any new commands you write.
 
@@ -46,6 +46,8 @@ When you change a file, paste it into its action again.
 | `rewards/first.cs` | Channel point reward *First* | Greets the first person to redeem it each stream. See [Rewards](#rewards) |
 | `rewards/last.cs` | Channel point reward *Last* | "If you ain't first, you're last!" Names tonight's First winner, with its own joke if that winner redeems Last too. See [Rewards](#rewards) |
 | `rewards/checkin.cs` | Channel point reward *Check-in*, **and** Twitch → Stream Online | Posts each viewer's arrival number and total visits. See [Rewards](#rewards) |
+| `alerts/discord.cs` | Timed Action *Discord Promo Timer* (**Settings → Timed Actions**, repeat every 2700 seconds) | Promotes the Discord server in chat every 45 minutes |
+| `alerts/ads.cs` | Twitch → Upcoming Ad, with **1 minute** ticked | Warns chat a minute before an ad break and says how long it will last |
 
 When a command takes a name (`!hug`, `!pet`, `!tuck`, `!pillory`), the name must be a real Twitch user.
 That stops chat from making the bot post whatever text it likes.

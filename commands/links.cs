@@ -16,7 +16,7 @@ public class CPHInline
 {
     // ---- the links ------------------------------------------------------------------------
 
-    private const string Discord = "https://discord.gg/WVffXrJt8h";
+    private const string Discord = "https://discord.gg/WVffXrJt8h"; // also in alerts/discord.cs
     private const string YouTube = "youtube.com/@KingBrewl";
     private const string TikTok = "tiktok.com/@KingBrewl";
     private const string X = "x.com/KingBrewl";
