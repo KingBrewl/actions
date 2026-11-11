@@ -266,23 +266,32 @@ public class CPHInline
     /**
      * The category the channel is set to right now, or "" if this build won't say.
      *
-     * Found by shape rather than by name: Streamer.bot hands CPH out as an interface and has renamed both the channel-info getter
-     * and its category property across versions, so any single-string method that looks like a
-     * channel-info getter is tried, then any property on the result that looks like a category.
+     * Found by shape rather than by name: Streamer.bot hands CPH out as an interface and has
+     * renamed its getters and their properties across versions, so the extended-user-info getter
+     * (then anything named like a channel-info getter) is tried by reflection, then any property
+     * on the result that looks like a category.
      *
      * Nothing that looks like a mutator is ever invoked - a single-string method with "game" in
      * the name could just as easily be the one that *changes* your category live on stream.
      */
     private string CurrentGame()
     {
-        string login = Arg(new[] { "broadcastUserName", "broadcastUser", "channel" }, "");
-        if (login.Length == 0) return "";
+        string login = Arg(new[] { "broadcastUserName", "channel" }, "");
+        string id = Arg(new[] { "broadcastUserId" }, "");
 
-        object info = Invoke("channelinfo", "login", login);
-        if (info == null) info = Invoke("channelinfo", null, login);
-        if (info == null) return "";
+        // Streamer.bot keeps the category on TwitchGetExtendedUserInfoByLogin/ById (its Game
+        // property). There is no *channelinfo* getter in current builds; it's only a fallback.
+        foreach (string getter in new[] { "twitchgetextendeduserinfo", "channelinfo" })
+        {
+            object info = null;
+            if (login.Length > 0) info = Invoke(getter, "login", login);
+            if (info == null && id.Length > 0) info = Invoke(getter, "byid", id);
+            string game = Category(info);
+            if (game.Length > 0) return game;
+        }
 
-        return Category(info);
+        CPH.LogWarn("[bad] couldn't read the current category (login '" + login + "', id '" + id + "')");
+        return "";
     }
 
     private string Category(object source)

@@ -138,14 +138,22 @@ public class CPHInline
 
     private string CurrentGame()
     {
-        string login = Arg(new[] { "broadcastUserName", "broadcastUser", "channel" }, "");
-        if (login.Length == 0) return "";
+        string login = Arg(new[] { "broadcastUserName", "channel" }, "");
+        string id = Arg(new[] { "broadcastUserId" }, "");
 
-        object info = Invoke("channelinfo", "login", login);
-        if (info == null) info = Invoke("channelinfo", null, login);
-        if (info == null) return "";
+        // Streamer.bot keeps the category on TwitchGetExtendedUserInfoByLogin/ById (its Game
+        // property). There is no *channelinfo* getter in current builds; it's only a fallback.
+        foreach (string getter in new[] { "twitchgetextendeduserinfo", "channelinfo" })
+        {
+            object info = null;
+            if (login.Length > 0) info = Invoke(getter, "login", login);
+            if (info == null && id.Length > 0) info = Invoke(getter, "byid", id);
+            string game = Category(info);
+            if (game.Length > 0) return game;
+        }
 
-        return Category(info);
+        CPH.LogWarn("[quote] couldn't read the current category (login '" + login + "', id '" + id + "')");
+        return "";
     }
 
     private string Category(object source)
