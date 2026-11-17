@@ -37,7 +37,6 @@ When you change a file, paste it into its action again.
 | `commands/pillory.cs` | Command `!pillory` | Puts `@name` in the stocks for a random crime, as a joke. Nobody is actually timed out |
 | `commands/quote.cs` | Command `!quote` | `!quote` shows a random quote, `!quote 5` shows quote 5, `!quote add <text>` adds one, and mods can `!quote remove 5`. Each new quote records the game you were playing, shown like `#3: "text" — KingBrewl, Elden Ring`. Mods can type `!quote game` to list quotes with no game, and `!quote game 5 Elden Ring` to set one |
 | `commands/bad.cs` | Command `!bad` | Roasts the streamer's gameplay with a random line |
-| `commands/oof.cs` | Command `!oof` | Plays the oof sound. Mods and VIPs have no cooldown; everyone else shares a 1-minute one. Set `SoundFile` to your own sound file, which isn't included |
 | `commands/clip.cs` | Command `!clip` | Makes a Twitch clip and posts the link. See [Clips](#clips) |
 | `commands/death.cs` | Command `!death` and `!deaths` in one trigger | Death counter shown in chat and on screen. See [Death counter](#death-counter) |
 | `commands/letsgo.cs` | Command `!letsgo` / `!lg` | Counts "let's go"s for this stream and all time. See [Let's go](#lets-go) |
@@ -47,6 +46,7 @@ When you change a file, paste it into its action again.
 | `commands/deathroll.cs` | Command `!deathroll` / `!dr` | The WoW deathroll game between two viewers, with or without a coppers bet. See [Deathroll](#deathroll) |
 | `commands/raid.cs` | Command `!raid` | Posts a raid message for chat to copy, once with sub emotes and once with emoji |
 | `commands/shoutout.cs` | Command `!so` / `!shoutout` (mods, VIPs), and optionally Twitch → Raid | Posts a shoutout in chat and sends Twitch's own `/shoutout`. On a Raid trigger it shouts out the raider automatically |
+| `sounds/sfx.cs` | Command with every sound's name (`!oof`, `!bruh`, …) and `!sounds`, all in one trigger | Plays sound effects on stream. `!sounds` lists them. See [Sounds](#sounds) |
 | `rewards/first.cs` | Channel point reward *First* | Greets the first person to redeem it each stream. See [Rewards](#rewards) |
 | `rewards/last.cs` | Channel point reward *Last* | "If you ain't first, you're last!" Names tonight's First winner, with its own joke if that winner redeems Last too. See [Rewards](#rewards) |
 | `rewards/checkin.cs` | Channel point reward *Check-in*, **and** Twitch → Stream Online | Posts each viewer's arrival number and total visits, and pays 5 coppers. See [Rewards](#rewards) and [Coppers](#coppers) |
@@ -56,7 +56,7 @@ When you change a file, paste it into its action again.
 When a command takes a name (`!hug`, `!pet`, `!tuck`, `!pillory`), the name must be a real Twitch user.
 That stops chat from making the bot post whatever text it likes.
 
-`!bad`, `!pillory`, `!clip`, `!letsgo` and `!oof` have built-in cooldowns. When several people type
+`!bad`, `!pillory`, `!clip`, `!letsgo` and the sounds have built-in cooldowns. When several people type
 the same command at once, it only fires once.
 
 ## Clips
@@ -144,6 +144,32 @@ rolls a 1 loses.
 A challenge nobody answers lapses after 60 seconds. A player who hasn't rolled for 2 minutes
 loses if their opponent types `!deathroll`. If someone starts a new challenge, the stale game
 also ends, and the player who was waiting wins.
+
+## Sounds
+
+`sounds/sfx.cs` plays every sound. The sound files aren't in this repo. Save them in
+`C:\Stream\Sounds`, or change `SoundsFolder` at the top of the file.
+
+**To add a sound:**
+
+1. Download it into the sounds folder, for example from [myinstants](https://www.myinstants.com).
+2. Add a line to `Sounds` in `sfx.cs`: the command, the file name, the volume and the cooldown.
+3. Add the command (e.g. `!bruh`) to the action's trigger, then paste `sfx.cs` in again.
+
+If a sound's file is missing, the sound is skipped and left out of `!sounds`, so you can add
+the line before you have the file.
+
+Each sound has its own cooldown. After any sound plays, all sounds are also blocked for 10
+seconds, so chat can't stack them. Mods, VIPs and you skip both cooldowns. myinstants clips
+vary a lot in loudness, so set each sound's volume by playing it next to your mic.
+
+Keep this action in a group with anything else that shows up on screen or makes noise, such as
+**On Screen & Sounds**. Disabling that group makes the VOD clean.
+
+**On stream:** the sounds play through Windows' default output. In OBS, add an **Application
+Audio Capture** source for `Streamer.bot.exe`. That gives the sounds their own volume slider,
+a place for a limiter, and the option to leave them off the Twitch VOD track. If Desktop Audio
+also captures them, stream viewers hear every sound twice.
 
 ## Rewards
 
