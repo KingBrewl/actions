@@ -23,9 +23,20 @@ using System.Collections.Generic;
 //
 // "Once per person per stream" is the reward's own Max Per User Per Stream setting, which
 // Twitch enforces — this action only double-checks it.
+//
+// Each check-in also pays coppers, the tavern's currency (see commands/coppers.cs). Checking in
+// is the only way to earn them, so they stay scarce: a pile of coppers means a regular.
 public class CPHInline
 {
     private const int NewStreamAfterHours = 6;
+
+    // Coppers paid per check-in. Kept small on purpose — !gamble and !deathroll bets are sized
+    // against it, so raising it inflates everything.
+    private const int CheckInCoppers = 5;
+
+    // A viewer's first coppers also pay for the check-ins they made before coppers existed,
+    // at CheckInCoppers each, so the regulars don't start level with someone new.
+    private const bool BackfillPastVisits = true;
 
     // Visit counts that get a line of their own instead of the usual one.
     private static readonly Dictionary<int, string> VisitMilestones = new Dictionary<int, string>
@@ -110,7 +121,20 @@ public class CPHInline
         CPH.SetTwitchUserVar(login, UserStreamVar, stream.ToString(), true);
         CPH.SetTwitchUserVar(login, UserTotalVar, total.ToString(), true);
 
-        CPH.SendMessage(Line(user, arrivals, total));
+        CPH.SendMessage(Line(user, arrivals, total) + Pay(user, login, total));
+    }
+
+    // Pays the check-in and returns the bit of the message that says so.
+    private string Pay(string user, string login, int total)
+    {
+        if (CheckInCoppers <= 0) return "";
+
+        int earned = CheckInCoppers;
+        if (BackfillPastVisits && !InLedger(login)) earned = CheckInCoppers * total;
+
+        int purse = Balance(login) + earned;
+        SetBalance(login, user, purse);
+        return " +" + Coppers(earned) + " (purse: " + purse + ")";
     }
 
     private string Line(string user, int arrivals, int total)
@@ -177,6 +201,40 @@ public class CPHInline
             case 3: return n + "rd";
             default: return n + "th";
         }
+    }
+
+    // ---- the coppers purse ----------------------------------------------------------------
+    // The same block is in commands/coppers.cs, gamble.cs and deathroll.cs. All four read and
+    // write the same variables, so a change to one copy goes in all of them.
+
+    // Per viewer: their coppers, and their display name for the leaderboard.
+    private const string BalanceVar = "coppers.balance";
+    private const string NameVar = "coppers.name";
+    // Every login that has ever held coppers, space-separated: what !coppers top ranks.
+    private const string LedgerVar = "coppers.ledger";
+
+    private int Balance(string login)
+    {
+        return Int(UserVar(login, BalanceVar));
+    }
+
+    private bool InLedger(string login)
+    {
+        return (" " + Global(LedgerVar) + " ").Contains(" " + login + " ");
+    }
+
+    // Sets a balance, and puts the viewer on the ledger the first time they hold any.
+    private void SetBalance(string login, string name, int coppers)
+    {
+        if (coppers < 0) coppers = 0;
+        CPH.SetTwitchUserVar(login, BalanceVar, coppers.ToString(), true);
+        if (name.Length > 0) CPH.SetTwitchUserVar(login, NameVar, name, true);
+        if (!InLedger(login)) CPH.SetGlobalVar(LedgerVar, (Global(LedgerVar) + " " + login).Trim(), true);
+    }
+
+    private string Coppers(int n)
+    {
+        return n + (n == 1 ? " copper" : " coppers");
     }
 
     // ---- Streamer.bot plumbing ------------------------------------------------------------

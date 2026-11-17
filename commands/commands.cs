@@ -39,6 +39,11 @@ public class CPHInline
         new object[] { "!deaths", Everyone },
         new object[] { "!letsgo", Everyone },
         new object[] { "!raid", Everyone },
+        new object[] { "!pp", Everyone },
+        new object[] { "!rizz", Everyone },
+        new object[] { "!coppers", Everyone },
+        new object[] { "!gamble", Everyone },
+        new object[] { "!deathroll", Everyone },
 
         // ---- mods and VIPs --------------------------------------------------------------
         new object[] { "!death", Vips },
@@ -46,7 +51,7 @@ public class CPHInline
     };
 
     // The commands with a help of their own, pointed at on the end of the line.
-    private const string Footer = "More: !clip help, !death help, !letsgo help";
+    private const string Footer = "More: !clip help, !death help, !letsgo help, !coppers help, !deathroll help";
 
     // Twitch cuts a chat message off at 500 characters. A list longer than this is sent as more
     // than one message rather than losing its tail.

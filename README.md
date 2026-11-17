@@ -41,11 +41,15 @@ When you change a file, paste it into its action again.
 | `commands/clip.cs` | Command `!clip` | Makes a Twitch clip and posts the link. See [Clips](#clips) |
 | `commands/death.cs` | Command `!death` and `!deaths` in one trigger | Death counter shown in chat and on screen. See [Death counter](#death-counter) |
 | `commands/letsgo.cs` | Command `!letsgo` / `!lg` | Counts "let's go"s for this stream and all time. See [Let's go](#lets-go) |
+| `commands/rate.cs` | Command `!pp` and `!rizz` in one trigger | Rates the asker or `@name`. Each person's result stays the same until the next day, which starts at 6am |
+| `commands/coppers.cs` | Command `!coppers` / `!copper` | Your coppers and leaderboard place, `@name`'s, or `!coppers top`. See [Coppers](#coppers) |
+| `commands/gamble.cs` | Command `!gamble` | Bets coppers on a 1–100 roll. See [Coppers](#coppers) |
+| `commands/deathroll.cs` | Command `!deathroll` / `!dr` | The WoW deathroll game between two viewers, with or without a coppers bet. See [Deathroll](#deathroll) |
 | `commands/raid.cs` | Command `!raid` | Posts a raid message for chat to copy, once with sub emotes and once with emoji |
 | `commands/shoutout.cs` | Command `!so` / `!shoutout` (mods, VIPs), and optionally Twitch → Raid | Posts a shoutout in chat and sends Twitch's own `/shoutout`. On a Raid trigger it shouts out the raider automatically |
 | `rewards/first.cs` | Channel point reward *First* | Greets the first person to redeem it each stream. See [Rewards](#rewards) |
 | `rewards/last.cs` | Channel point reward *Last* | "If you ain't first, you're last!" Names tonight's First winner, with its own joke if that winner redeems Last too. See [Rewards](#rewards) |
-| `rewards/checkin.cs` | Channel point reward *Check-in*, **and** Twitch → Stream Online | Posts each viewer's arrival number and total visits. See [Rewards](#rewards) |
+| `rewards/checkin.cs` | Channel point reward *Check-in*, **and** Twitch → Stream Online | Posts each viewer's arrival number and total visits, and pays 5 coppers. See [Rewards](#rewards) and [Coppers](#coppers) |
 | `alerts/discord.cs` | Timed Action *Discord Promo Timer* (**Settings → Timed Actions**, repeat every 2700 seconds) | Promotes the Discord server in chat every 45 minutes |
 | `alerts/ads.cs` | Twitch → Upcoming Ad, with **1 minute** ticked | Warns chat a minute before an ad break and says how long it will last |
 
@@ -102,6 +106,44 @@ Anyone can `!letsgo`. Mods and VIPs can use `!letsgo undo`, `!letsgo set <n>` (t
 The stream count resets on its own after 6 hours with no let's-gos. All-time milestones get a
 special message. To show the count on screen, add an OBS Text source named `LetsGo` and set
 `UpdateObsText` to `true`.
+
+## Coppers
+
+Coppers are the tavern's currency. They are separate from Crowns, the channel points. The only
+way to earn them is the Check-in reward: 5 coppers per check-in. A viewer's first check-in after
+you install this also pays 5 for each check-in they made before, so regulars start ahead.
+
+**Set up a queue first.** In Streamer.bot, go to **Action Queues → Add**, name it `Coppers` and
+tick **Blocking**. Then put Check-in, `!coppers`, `!gamble` and `!deathroll` in that queue
+(each action's **Queue** setting). That way, two of them can't change the same purse at the
+same moment.
+
+| Typed | Does |
+|---|---|
+| `!coppers` / `!coppers @name` | Shows a purse and its place on the leaderboard |
+| `!coppers top` | The 5 richest |
+| `!coppers add @name 5` / `take @name 5` | Mods: give or take up to 1000 at a time |
+| `!gamble 5` / `half` / `all` | Rolls 1–100. 1–54 loses the bet, 55–98 wins the same amount, 99–100 wins double |
+
+Gambling loses about 6% of what's bet over time, so it removes coppers from the tavern instead of
+adding more. The leaderboard covers everyone who has ever held a copper.
+
+## Deathroll
+
+The challenger rolls 1–100 first. Each roll after that is 1 to the previous roll, and whoever
+rolls a 1 loses.
+
+| Typed | Does |
+|---|---|
+| `!deathroll @name 5` | Challenge someone for 5 coppers each. Leave out the number to play for honour |
+| `!deathroll accept` / `decline` | Answer a challenge. Accepting puts both bets in the pot |
+| `!deathroll cancel` | Take your challenge back before it's answered |
+| `!deathroll` | Roll, on your turn |
+| `!deathroll stop` | Mods: end the game and return both bets |
+
+A challenge nobody answers lapses after 60 seconds. A player who hasn't rolled for 2 minutes
+loses if their opponent types `!deathroll`. If someone starts a new challenge, the stale game
+also ends, and the player who was waiting wins.
 
 ## Rewards
 
