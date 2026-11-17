@@ -107,22 +107,28 @@ public class CPHInline
     // The day's number for this login and command: the same inputs always give the same
     // number. string.GetHashCode isn't promised to stay the same between runs, so this is
     // FNV-1a with a final mix to spread it across the low bits the modulo reads.
+    //
+    // The hash depends on the multiplications wrapping around. Streamer.bot compiles with
+    // overflow checking on, which throws instead, hence the explicit unchecked block.
     private int Score(string login, string command, Rating rating)
     {
         DateTime day = DateTime.Now.AddHours(-DayStartsAtHour);
         string key = login + "|" + command + "|" + day.Year + "-" + day.Month + "-" + day.Day;
 
         uint hash = 2166136261;
-        foreach (char c in key)
+        unchecked
         {
-            hash ^= c;
-            hash *= 16777619;
+            foreach (char c in key)
+            {
+                hash ^= c;
+                hash *= 16777619;
+            }
+            hash ^= hash >> 16;
+            hash *= 0x85ebca6b;
+            hash ^= hash >> 13;
+            hash *= 0xc2b2ae35;
+            hash ^= hash >> 16;
         }
-        hash ^= hash >> 16;
-        hash *= 0x85ebca6b;
-        hash ^= hash >> 13;
-        hash *= 0xc2b2ae35;
-        hash ^= hash >> 16;
 
         uint span = (uint)(rating.Max - rating.Min + 1);
         return rating.Min + (int)(hash % span);
