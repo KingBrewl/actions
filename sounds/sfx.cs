@@ -46,18 +46,33 @@ public class CPHInline
     }
 
     /* -----------------------------------------------------------------------------------
-     * The sounds, by command (without the !), in the order !sounds lists them. Clips from
-     * myinstants vary a lot in loudness — play each one next to your mic and set Volume so
-     * they sit level with your voice.
+     * The sounds, by command (without the !), in the order !sounds lists them.
+     *
+     * Clips from myinstants vary a lot in loudness, so each Volume was measured to match the
+     * others: oof at 0.6 is the reference, and the rest are set to come out as loud as it
+     * does. A new sound's volume can be worked out the same way with ffmpeg:
+     *
+     *   ffmpeg -i new.mp3 -af ebur128 -f null -     (read "I:", the loudness in LUFS)
+     *   Volume = 10 ^ ((-23.2 - LUFS) / 20)          (-23.2 is oof's loudness at 0.6)
+     *
+     * Or just play it next to the others and adjust by ear. To make every sound louder or
+     * quieter together, use the Streamer.bot slider in OBS instead.
      * ----------------------------------------------------------------------------------- */
     private static readonly List<KeyValuePair<string, Sound>> Sounds = new List<KeyValuePair<string, Sound>>
     {
-        Entry("oof",             "oof.mp3",              0.6f, 60),
-        Entry("bruh",            "bruh.mp3",             0.6f, 60),
-        Entry("vineboom",        "vine-boom.mp3",        0.5f, 60),
-        Entry("airhorn",         "airhorn.mp3",          0.4f, 120),
-        Entry("wompwomp",        "womp-womp.mp3",        0.6f, 60),
-        Entry("emotionaldamage", "emotional-damage.mp3", 0.6f, 120)
+        Entry("oof",             "oof.mp3",                     0.60f, 60),
+        Entry("bruh",            "bruh.mp3",                    0.24f, 60),
+        Entry("vineboom",        "vine-boom.mp3",               0.19f, 60),
+        Entry("airhorn",         "airhorn.mp3",                 0.21f, 120),
+        Entry("wompwomp",        "womp-womp.mp3",               0.33f, 60),
+        Entry("emotionaldamage", "emotional-damage.mp3",        0.19f, 120),
+        Entry("faaah",           "faaah.mp3",                   0.27f, 60),
+        Entry("wow",             "anime-wow-sound-effect.mp3",  0.40f, 90),
+        Entry("meow",            "m-e-o-w.mp3",                 0.45f, 60),
+        Entry("heehee",          "michael-jackson-hee-hee.mp3", 0.56f, 60),
+        Entry("getout",          "tuco-get-out.mp3",            0.31f, 60),
+        // !rizz is taken by the rizz rating in commands/rate.cs.
+        Entry("rizzup",          "rizz-sound-effect.mp3",       0.27f, 60)
     };
 
     private static KeyValuePair<string, Sound> Entry(string command, string file, float volume, int cooldownSeconds)
