@@ -42,7 +42,7 @@ public class CPHInline
             CPH.LogWarn("[first] couldn't save the winner: " + error);
         }
 
-        CPH.SendMessage(user + " is first through the tavern doors! The hearth is theirs and the first round's on the house! kingbre3Hi");
+        CPH.SendMessage(user + " is first through the tavern doors! The hearth is theirs and the first round's on the house! kingbre3Wave");
         return true;
     }
 

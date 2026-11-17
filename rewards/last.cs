@@ -4,7 +4,7 @@ using System.Collections.Generic;
 // Channel point reward: "Last". The consolation prize for everyone who didn't get First —
 // names tonight's First winner and reminds the redeemer that if you ain't first, you're last.
 //
-//   Ponytail stumbles in behind Mouse, who claimed the hearth ages ago. If you ain't first, you're last! kingbre3Hi
+//   Ponytail stumbles in behind Mouse, who claimed the hearth ages ago. If you ain't first, you're last! kingbre3Wave
 //
 // Any sound or video on screen comes from an alert tool (Tangia, or Twitch's own alerts as
 // Check-in uses), which sees the redemption from Twitch on its own, so nothing here talks to it.
@@ -26,7 +26,7 @@ public class CPHInline
     // Someone who didn't get beaten to it: {user} is the redeemer, {first} tonight's First.
     private static readonly string[] Lines =
     {
-        "{user} stumbles in behind {first}, who claimed the hearth ages ago. If you ain't first, you're last! kingbre3Hi",
+        "{user} stumbles in behind {first}, who claimed the hearth ages ago. If you ain't first, you're last! kingbre3Wave",
         "{user} arrives to find {first}'s tankard already empty. If you ain't first, you're last!",
         "{first} took the best stool and the first round. {user} gets the draughty corner. If you ain't first, you're last!",
         "The bard has already written a song about {first}. {user} gets a footnote. If you ain't first, you're last!",
@@ -75,7 +75,7 @@ public class CPHInline
         {
             // A viewer who spent their points still gets a line.
             CPH.LogWarn("[last] failed: " + error);
-            CPH.SendMessage(user + " is last! If you ain't first, you're last! kingbre3Hi");
+            CPH.SendMessage(user + " is last! If you ain't first, you're last! kingbre3Wave");
         }
         return true;
     }
