@@ -17,7 +17,7 @@ a clean VOD when you're recording.
 
 | Group | Actions | Shows up in the VOD? |
 |---|---|---|
-| **Core** | `!commands`, links, `!game`, `!lurk`, `!clip`, `!so`, `!raid` | No, chat only |
+| **Core** | `!commands`, links, `!game`, `!uptime`, `!followage`, `!accountage`, `!schedule`, `!lurk`, `!clip`, `!so`, `!raid` | No, chat only |
 | **Chat Fun** | `!hug`, `!pet`, `!tuck`, `!pillory`, `!bad`, `!quote`, `!pp`/`!rizz` | No, chat only |
 | **Counters** | `!death`, `!letsgo` | The death counter does, if it's on screen. Use `!death hide` for a clean VOD, which keeps counting |
 | **Coppers** | Check-in, Coppers Events, `!coppers`, `!gamble`, `!deathroll` | Check-in's video does: it's a Twitch alert, so pause the reward |
@@ -36,6 +36,7 @@ a clean VOD when you're recording.
 - **Settings.** Each file starts with a few settings (`ModsOnly`, `CooldownSeconds`, …). Each
   one has a comment saying what it does.
 - **`links.cs`** holds your Discord invite, socials, YouTube and the `!smp` message. Set them at the top of the file. `alerts/discord.cs` has its own copy of the Discord invite, so update it there too.
+- **`info.cs`** has `ScheduleFallback`, what `!schedule` says when your Twitch schedule is empty. Put your usual days there if you don't keep a Twitch schedule.
 - **`commands.cs`** is a hand-written list for `!commands`. Remove any commands you don't
   import, and add any new commands you write.
 
@@ -48,6 +49,7 @@ When you change a file, paste it into its action again.
 | `commands/commands.cs` | Command `!commands` / `!cmds` / `!cmd` | Lists the commands the asker can use (mods and VIPs also see theirs) |
 | `commands/links.cs` | Command `!discord`, `!social` / `!socials`, `!youtube` / `!yt`, `!smp` / `!minecraft`, all in one trigger | Posts your links. `!smp` points chat to the Discord's #minecraft channel |
 | `commands/game.cs` | Command `!game` | Posts the current category |
+| `commands/info.cs` | Command `!uptime`, `!followage`, `!accountage` and `!schedule`, all in one trigger | Stream uptime, how long the asker (or `@name`) has followed, account age, and the next streams on your Twitch schedule. Asks Twitch directly through Streamer.bot's login. Set `ScheduleFallback` at the top for when the schedule is empty |
 | `commands/lurk.cs` | Command `!lurk` and `!unlurk` in one trigger | `!unlurk` says how long they were away |
 | `commands/hug.cs` | Command `!hug` | Hugs `@name`, or the whole chat if no name is given |
 | `commands/pet.cs` | Command `!pet` | Gives `@name` gentle head pats. A bare `!pet` gets the asker pet |
@@ -228,5 +230,7 @@ time instead: a First claimed in the last 6 hours counts as tonight's.
 
 Streamer.bot's C# compiler only gives you mscorlib. `System.Reflection`, `Random` and
 `StringBuilder` work, but anything from `System.dll` (`System.Net`, `System.Uri`,
-`System.Linq`, `Regex`) won't compile. Add new commands to `commands/commands.cs` so they show
+`System.Linq`, `Regex`) won't compile. Newtonsoft's `JsonConvert` works, but `JObject` and
+`JToken` don't: they need `System.Core` (error CS0012), so read JSON into small classes
+instead, as `info.cs` does. Add new commands to `commands/commands.cs` so they show
 up in `!commands`.
