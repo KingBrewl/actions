@@ -2,18 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-// Trigger: Twitch -> Command, with "!coppers" and "!copper" in the command box. Chat-only.
+// Trigger: Twitch -> Command, with "!coppers", "!copper" and "!give" in the command box.
+// Chat-only.
 //
 //   !coppers                     -> your coppers and your place on the leaderboard
 //   !coppers @name               -> someone else's
 //   !coppers top                 -> the richest in the tavern
+//   !give @name 5                -> hand 5 of your coppers to someone (!coppers give works too)
 //   !coppers add @name 5         -> mods: hand out coppers, e.g. to put right a refund
 //   !coppers take @name 5        -> mods: take some back
 //   !coppers help                -> all of the above, in chat
 //
 // Coppers are the tavern's currency, kept apart from Crowns (Twitch channel points) so nobody
-// mixes the two up. Viewers earn them only by checking in (rewards/checkin.cs) and spend them
-// on !gamble and !deathroll, so they stay scarce on purpose.
+// mixes the two up. Viewers earn them by checking in (rewards/checkin.cs) and by supporting the
+// channel (alerts/coppers-events.cs), and spend them on !gamble and !deathroll. They stay
+// scarce on purpose.
 //
 // The leaderboard covers every viewer who has ever held a copper: they're listed in the
 // coppers.ledger global, and each balance lives in that viewer's own user variable.
@@ -35,6 +38,16 @@ public class CPHInline
         string[] words = Words();
         string sub = words.Length > 0 ? words[0].ToLowerInvariant() : "";
 
+        // !give @name 5 is !coppers give @name 5 under its own name.
+        if (Invoked() == "give")
+        {
+            var withSub = new string[words.Length + 1];
+            withSub[0] = "give";
+            Array.Copy(words, 0, withSub, 1, words.Length);
+            words = withSub;
+            sub = "give";
+        }
+
         switch (sub)
         {
             case "":
@@ -45,8 +58,11 @@ public class CPHInline
                 CPH.SendMessage(Top());
                 return true;
             case "help":
-                CPH.SendMessage("!coppers shows your purse, !coppers @name someone else's, !coppers top the richest. " +
-                    "Earn them with the Check-in reward, spend them on !gamble and !deathroll. kingbre3Golden");
+                CPH.SendMessage("!coppers shows your purse, !coppers @name someone else's, !coppers top the richest, " +
+                    "!give @name 5 shares yours. Earn them by checking in and supporting the stream; spend them on !gamble and !deathroll. kingbre3Golden");
+                return true;
+            case "give":
+                Give(user, login, words);
                 return true;
             case "add":
             case "take":
@@ -70,7 +86,7 @@ public class CPHInline
         if (balance == 0)
             return own
                 ? name + ", your purse is empty. Check in with Crowns each stream to earn coppers! kingbre3Howdy"
-                : name + "'s purse is empty. kingbre3O";
+                : name + "'s purse is empty. kingbre3O7";
 
         // Ties share a place: your rank is one more than the number of people richer than you.
         var board = Board();
@@ -109,6 +125,46 @@ public class CPHInline
         return board;
     }
 
+    // !give @name <n>: moves coppers from the asker's purse to someone else's. words[0] is
+    // "give". Nothing is created or destroyed, so it can't inflate anything.
+    private void Give(string user, string login, string[] words)
+    {
+        if (login.Length == 0) return;
+
+        int amount;
+        if (words.Length < 3 || !int.TryParse(words[2], out amount) || amount <= 0)
+        {
+            CPH.SendMessage(user + ", try !give @name 5");
+            return;
+        }
+
+        string name, targetLogin;
+        if (!Lookup(words[1], out name, out targetLogin))
+        {
+            CPH.SendMessage(user + ", couldn't find that villager - try !give @name 5");
+            return;
+        }
+        if (targetLogin == login)
+        {
+            CPH.SendMessage(user + " moves their coppers from one pocket to the other. Very generous. kingbre3Lol");
+            return;
+        }
+
+        int mine = Balance(login);
+        if (amount > mine)
+        {
+            CPH.SendMessage(user + ", you only have " + Coppers(mine) + ". kingbre3O7");
+            return;
+        }
+
+        int theirs = Balance(targetLogin) + amount;
+        SetBalance(login, user, mine - amount);
+        SetBalance(targetLogin, name, theirs);
+
+        CPH.SendMessage(user + " gives " + Coppers(amount) + " to " + name + "! kingbre3Heart (" +
+            user + ": " + (mine - amount) + ", " + name + ": " + theirs + ")");
+    }
+
     // !coppers add|take @name <n>, mods only. Viewers get no reply — the command just isn't
     // theirs, the same as !death.
     private void Adjust(string user, string[] words, bool add)
@@ -140,8 +196,9 @@ public class CPHInline
     }
 
     // ---- the coppers purse ----------------------------------------------------------------
-    // The same block is in rewards/checkin.cs, gamble.cs and deathroll.cs. All four read and
-    // write the same variables, so a change to one copy goes in all of them.
+    // The same block is in rewards/checkin.cs, alerts/coppers-events.cs, gamble.cs and
+    // deathroll.cs. All five read and write the same
+    // variables, so a change to one copy goes in all of them.
 
     // Per viewer: their coppers, and their display name for the leaderboard.
     private const string BalanceVar = "coppers.balance";
@@ -220,6 +277,16 @@ public class CPHInline
     }
 
     // ---- Streamer.bot plumbing ------------------------------------------------------------
+
+    // The command that fired, e.g. "!give" -> "give". A Chat Message trigger has no command
+    // argument, so the first word of the message stands in for it.
+    private string Invoked()
+    {
+        string invoked = Arg(new[] { "command", "message" }, "").Trim().TrimStart('!');
+        int space = invoked.IndexOf(' ');
+        if (space >= 0) invoked = invoked.Substring(0, space);
+        return invoked.ToLowerInvariant();
+    }
 
     // The words after the command. A Chat Message trigger hands over the whole message, so a
     // leading !command is dropped.

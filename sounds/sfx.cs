@@ -137,7 +137,7 @@ public class CPHInline
         foreach (var entry in Sounds)
             if (File.Exists(Path.Combine(SoundsFolder, entry.Value.File))) names.Add("!" + entry.Key);
 
-        if (names.Count == 0) return "The tavern's sound board is empty for now. kingbre3O";
+        if (names.Count == 0) return "The tavern's sound board is empty for now. kingbre3O7";
         return "kingbre3Dance Sounds: " + string.Join(" ", names.ToArray());
     }
 

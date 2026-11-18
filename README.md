@@ -8,6 +8,24 @@ file is one self-contained C# action, with no API keys or extra setup beyond wha
 1. In Streamer.bot: **Actions → right-click → Add Action**, named after the file.
 2. Add a **C# Method** sub-action and paste in the file's full contents.
 3. Attach the trigger from the table below. Right-click the action → **Test Trigger** to try it.
+4. Put the action in its group from [Groups](#groups).
+
+### Groups
+
+Grouping actions this way lets you disable a whole kind of thing at once: a quieter stream, or
+a clean VOD when you're recording.
+
+| Group | Actions | Shows up in the VOD? |
+|---|---|---|
+| **Core** | `!commands`, links, `!game`, `!lurk`, `!clip`, `!so`, `!raid` | No, chat only |
+| **Chat Fun** | `!hug`, `!pet`, `!tuck`, `!pillory`, `!bad`, `!quote`, `!pp`/`!rizz` | No, chat only |
+| **Counters** | `!death`, `!letsgo` | The death counter does, if it's on screen. Use `!death hide` for a clean VOD, which keeps counting |
+| **Coppers** | Check-in, Coppers Events, `!coppers`, `!gamble`, `!deathroll` | Check-in's video does: it's a Twitch alert, so pause the reward |
+| **Rewards** | First, Last | No, chat only |
+| **Sounds** | The sound board (`sfx.cs`) | **Yes.** Disable this group for a clean VOD |
+| **Timers & Alerts** | Discord promo, ad warning | No, chat only |
+
+"Chat only" assumes there's no chat overlay on screen. If you have one, hide it too.
 
 ### Make it yours
 
@@ -41,7 +59,7 @@ When you change a file, paste it into its action again.
 | `commands/death.cs` | Command `!death` and `!deaths` in one trigger | Death counter shown in chat and on screen. See [Death counter](#death-counter) |
 | `commands/letsgo.cs` | Command `!letsgo` / `!lg` | Counts "let's go"s for this stream and all time. See [Let's go](#lets-go) |
 | `commands/rate.cs` | Command `!pp` and `!rizz` in one trigger | Rates the asker or `@name`. Each person's result stays the same until the next day, which starts at 6am |
-| `commands/coppers.cs` | Command `!coppers` / `!copper` | Your coppers and leaderboard place, `@name`'s, or `!coppers top`. See [Coppers](#coppers) |
+| `commands/coppers.cs` | Command `!coppers` / `!copper` / `!give` | Your coppers and leaderboard place, `@name`'s, or `!coppers top`. `!give @name 5` hands coppers to someone. See [Coppers](#coppers) |
 | `commands/gamble.cs` | Command `!gamble` | Bets coppers on a 1–100 roll. See [Coppers](#coppers) |
 | `commands/deathroll.cs` | Command `!deathroll` / `!dr` | The WoW deathroll game between two viewers, with or without a coppers bet. See [Deathroll](#deathroll) |
 | `commands/raid.cs` | Command `!raid` | Posts a raid message for chat to copy, once with sub emotes and once with emoji |
@@ -52,6 +70,7 @@ When you change a file, paste it into its action again.
 | `rewards/checkin.cs` | Channel point reward *Check-in*, **and** Twitch → Stream Online | Posts each viewer's arrival number and total visits, and pays 5 coppers. See [Rewards](#rewards) and [Coppers](#coppers) |
 | `alerts/discord.cs` | Timed Action *Discord Promo Timer* (**Settings → Timed Actions**, repeat every 2700 seconds) | Promotes the Discord server in chat every 45 minutes |
 | `alerts/ads.cs` | Twitch → Upcoming Ad, with **1 minute** ticked | Warns chat a minute before an ad break and says how long it will last |
+| `alerts/coppers-events.cs` | Twitch → Subscription, Resubscription, Gift Subscription, Cheer, Raid and Follow, all on one action. **Not** Gift Bomb | Pays coppers for supporting the channel. See [Coppers](#coppers) |
 
 When a command takes a name (`!hug`, `!pet`, `!tuck`, `!pillory`), the name must be a real Twitch user.
 That stops chat from making the bot post whatever text it likes.
@@ -109,19 +128,33 @@ special message. To show the count on screen, add an OBS Text source named `Lets
 
 ## Coppers
 
-Coppers are the tavern's currency. They are separate from Crowns, the channel points. The only
+Coppers are the tavern's currency. They are separate from Crowns, the channel points. The main
 way to earn them is the Check-in reward: 5 coppers per check-in. A viewer's first check-in after
 you install this also pays 5 for each check-in they made before, so regulars start ahead.
 
+Supporting the channel also pays (`alerts/coppers-events.cs`):
+
+| Event | Coppers |
+|---|---|
+| Sub or resub | 25, or 50 at tier 2 and 125 at tier 3 |
+| Gift sub | 10 per gift to the gifter (tier 2 ×2, tier 3 ×5). Anonymous gifts pay no one |
+| Bits | 1 per 100. Leftover bits carry over to the next cheer |
+| Raid | 25 to the raider |
+| Follow | 5, only the first time someone follows |
+
+Don't attach the Gift Bomb trigger. Twitch also sends a Gift Subscription for every sub in a
+bomb, and those already pay the gifter, so a Gift Bomb trigger would pay twice.
+
 **Set up a queue first.** In Streamer.bot, go to **Action Queues → Add**, name it `Coppers` and
-tick **Blocking**. Then put Check-in, `!coppers`, `!gamble` and `!deathroll` in that queue
-(each action's **Queue** setting). That way, two of them can't change the same purse at the
-same moment.
+tick **Blocking**. Then put Check-in, Coppers Events, `!coppers`, `!gamble` and `!deathroll` in
+that queue (each action's **Queue** setting). That way, two of them can't change the same purse
+at the same moment.
 
 | Typed | Does |
 |---|---|
 | `!coppers` / `!coppers @name` | Shows a purse and its place on the leaderboard |
 | `!coppers top` | The 5 richest |
+| `!give @name 5` | Hands 5 of your coppers to someone. `!coppers give @name 5` works too |
 | `!coppers add @name 5` / `take @name 5` | Mods: give or take up to 1000 at a time |
 | `!gamble 5` / `half` / `all` | Rolls 1–100. 1–54 loses the bet, 55–98 wins the same amount, 99–100 wins double |
 
@@ -163,8 +196,8 @@ Each sound has its own cooldown. After any sound plays, all sounds are also bloc
 seconds, so chat can't stack them. Mods, VIPs and you skip both cooldowns. myinstants clips
 vary a lot in loudness, so set each sound's volume by playing it next to your mic.
 
-Keep this action in a group with anything else that shows up on screen or makes noise, such as
-**On Screen & Sounds**. Disabling that group makes the VOD clean.
+Put this action in the **Sounds** group. Disabling that group silences every sound at once, for
+a clean VOD.
 
 **On stream:** the sounds play through Windows' default output. In OBS, add an **Application
 Audio Capture** source for `Streamer.bot.exe`. That gives the sounds their own volume slider,

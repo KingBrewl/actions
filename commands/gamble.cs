@@ -15,8 +15,8 @@ using System.Collections.Generic;
 //   99-100   jackpot: the bet back, plus twice as much again
 //
 // The house wins slightly more than it loses (about 6% of every copper bet over time), so
-// gambling drains coppers rather than printing them — checking in stays the only way to get
-// rich. Move LoseUpTo or JackpotFrom to change that.
+// gambling drains coppers rather than printing them. Checking in and supporting the channel
+// stay the only ways to get rich. Move LoseUpTo or JackpotFrom to change that.
 //
 // Put this action in the "Coppers" queue with the others — see the README.
 public class CPHInline
@@ -69,7 +69,7 @@ public class CPHInline
 
         if (bet > purse)
         {
-            CPH.SendMessage(user + ", you only have " + Coppers(purse) + ". kingbre3O");
+            CPH.SendMessage(user + ", you only have " + Coppers(purse) + ". kingbre3O7");
             return true;
         }
 
@@ -83,8 +83,8 @@ public class CPHInline
             purse -= bet;
             SetBalance(login, user, purse);
             CPH.SendMessage(allIn
-                ? user + " went all in, rolled " + roll + " and lost the lot. A moment of silence, please. kingbre3O"
-                : user + " rolled " + roll + " and lost " + Coppers(bet) + ". Purse: " + purse + " kingbre3O");
+                ? user + " went all in, rolled " + roll + " and lost the lot. A moment of silence, please. kingbre3O7"
+                : user + " rolled " + roll + " and lost " + Coppers(bet) + ". Purse: " + purse + " kingbre3O7");
             return true;
         }
 
@@ -118,8 +118,9 @@ public class CPHInline
     }
 
     // ---- the coppers purse ----------------------------------------------------------------
-    // The same block is in rewards/checkin.cs, coppers.cs and deathroll.cs. All four read and
-    // write the same variables, so a change to one copy goes in all of them.
+    // The same block is in rewards/checkin.cs, alerts/coppers-events.cs, coppers.cs and
+    // deathroll.cs. All five read and write the same
+    // variables, so a change to one copy goes in all of them.
 
     // Per viewer: their coppers, and their display name for the leaderboard.
     private const string BalanceVar = "coppers.balance";

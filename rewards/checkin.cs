@@ -24,8 +24,9 @@ using System.Collections.Generic;
 // "Once per person per stream" is the reward's own Max Per User Per Stream setting, which
 // Twitch enforces — this action only double-checks it.
 //
-// Each check-in also pays coppers, the tavern's currency (see commands/coppers.cs). Checking in
-// is the only way to earn them, so they stay scarce: a pile of coppers means a regular.
+// Each check-in also pays coppers, the tavern's currency (see commands/coppers.cs). Apart from the
+// small payouts for subs, bits and raids (alerts/coppers-events.cs), checking in is the only
+// way to earn them, so they stay scarce: a pile of coppers means a regular.
 public class CPHInline
 {
     private const int NewStreamAfterHours = 6;
@@ -204,8 +205,9 @@ public class CPHInline
     }
 
     // ---- the coppers purse ----------------------------------------------------------------
-    // The same block is in commands/coppers.cs, gamble.cs and deathroll.cs. All four read and
-    // write the same variables, so a change to one copy goes in all of them.
+    // The same block is in alerts/coppers-events.cs and commands/coppers.cs, gamble.cs and
+    // deathroll.cs. All five read and write the same
+    // variables, so a change to one copy goes in all of them.
 
     // Per viewer: their coppers, and their display name for the leaderboard.
     private const string BalanceVar = "coppers.balance";

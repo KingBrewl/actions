@@ -13,7 +13,10 @@ using System.Reflection;
 //   !deathroll accept        -> the challenged player takes it on; both bets go in the pot
 //   !deathroll decline       -> or doesn't
 //   !deathroll cancel        -> the challenger takes it back before it's answered
-//   !deathroll               -> on your turn, rolls. Otherwise says whose turn it is
+//   !deathroll 37            -> on your turn, rolls 1-37. The game prompts with the number, and
+//                               in a game anything after !deathroll rolls — Twitch drops a
+//                               message identical to your last one, so plain !deathroll every
+//                               turn would get eaten. Outside a game, says whose turn it is
 //   !deathroll stop          -> mods: ends the game and hands both bets back
 //   !deathroll help          -> the rules, in chat
 //
@@ -84,10 +87,22 @@ public class CPHInline
             game = new Game();
         }
 
+        // Twitch drops a message identical to one the same viewer sent in the last 30 seconds,
+        // so typing "!deathroll" every other turn would get eaten. Players are prompted with the
+        // number they're rolling to ("!deathroll 37", as in WoW's /roll 37), which changes every
+        // turn, and while a player is in a game anything after !deathroll is a roll. That's also
+        // what keeps "!deathroll 37" from being read as a challenge to a viewer called 37.
+        bool player = game.Phase == "playing" && (login == game.P1Login || login == game.P2Login);
+        if (player && sub != "help" && sub != "stop")
+        {
+            Roll(game);
+            return true;
+        }
+
         switch (sub)
         {
             case "help":
-                CPH.SendMessage("Deathroll: !deathroll @name 5 to challenge. Take turns typing !deathroll - first roll is 1-" +
+                CPH.SendMessage("Deathroll: !deathroll @name 5 to challenge. Take turns rolling with !deathroll <number> - first roll is 1-" +
                     StartNumber + ", then 1 to the last roll. Roll a 1 and you die; the other takes the pot. kingbre3Pew");
                 return true;
             case "accept":
@@ -164,7 +179,7 @@ public class CPHInline
         }
         if (Balance(login) < wager)
         {
-            CPH.SendMessage(user + ", you only have " + Coppers(Balance(login)) + ". kingbre3O");
+            CPH.SendMessage(user + ", you only have " + Coppers(Balance(login)) + ". kingbre3O7");
             return;
         }
         if (Balance(targetLogin) < wager)
@@ -199,7 +214,7 @@ public class CPHInline
         if (Balance(game.P1Login) < game.Wager || Balance(game.P2Login) < game.Wager)
         {
             Clear();
-            CPH.SendMessage("Someone's purse came up short of " + Coppers(game.Wager) + " - the deathroll is off. kingbre3O");
+            CPH.SendMessage("Someone's purse came up short of " + Coppers(game.Wager) + " - the deathroll is off. kingbre3O7");
             return;
         }
 
@@ -213,7 +228,7 @@ public class CPHInline
         Save(game);
 
         string pot = game.Wager > 0 ? Coppers(game.Wager * 2) + " in the pot" : "For honour alone";
-        CPH.SendMessage(game.P2Name + " accepts! " + pot + ". " + game.P1Name + ", roll first: !deathroll (1-" + StartNumber + ") kingbre3Pew");
+        CPH.SendMessage(game.P2Name + " accepts! " + pot + ". " + game.P1Name + ", roll first: !deathroll " + StartNumber + " kingbre3Pew");
     }
 
     private void Roll(Game game)
@@ -247,7 +262,7 @@ public class CPHInline
             string loser = game.TurnName;
             string winner = game.WaitingName;
             Win(game, game.Turn == 1 ? 2 : 1);
-            CPH.SendMessage(loser + " rolls 1 (1-" + max + ") and DIES! kingbre3O " + winner + Prize(game.Wager) + " kingbre3King");
+            CPH.SendMessage(loser + " rolls 1 (1-" + max + ") and DIES! kingbre3O7 " + winner + Prize(game.Wager) + " kingbre3King");
             return;
         }
 
@@ -257,7 +272,7 @@ public class CPHInline
         game.At = DateTime.UtcNow.Ticks;
         Save(game);
 
-        CPH.SendMessage(rolled + " rolls " + roll + " (1-" + max + "). " + game.TurnName + ", your turn: !deathroll (1-" + roll + ")");
+        CPH.SendMessage(rolled + " rolls " + roll + " (1-" + max + "). " + game.TurnName + ", your turn: !deathroll " + roll);
     }
 
     // The player whose turn it is took too long; the one waiting wins.
@@ -355,8 +370,9 @@ public class CPHInline
     }
 
     // ---- the coppers purse ----------------------------------------------------------------
-    // The same block is in rewards/checkin.cs, coppers.cs and gamble.cs. All four read and
-    // write the same variables, so a change to one copy goes in all of them.
+    // The same block is in rewards/checkin.cs, alerts/coppers-events.cs, coppers.cs and
+    // gamble.cs. All five read and write the same
+    // variables, so a change to one copy goes in all of them.
 
     // Per viewer: their coppers, and their display name for the leaderboard.
     private const string BalanceVar = "coppers.balance";
