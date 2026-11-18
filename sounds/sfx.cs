@@ -11,9 +11,14 @@ using System.IO;
 // Adding a sound:
 //   1. Save the file (.mp3 or .wav) into SoundsFolder. myinstants.com has most of the classics.
 //   2. Add a line to Sounds below: the command, the file name, its volume and its cooldown.
-//   3. Add the command to this action's trigger in Streamer.bot.
+//   3. Add the command to Unlocked below, if chat should have it straight away.
+//   4. Add the command to this action's trigger in Streamer.bot.
 // A sound whose file is missing is skipped and left off !sounds, so the list can run ahead of
 // the folder without breaking anything.
+//
+// Chat can only play the sounds in Unlocked. The others stay in Sounds with their volumes, so
+// unlocking one later takes one word. A locked sound's command does nothing and isn't listed
+// in !sounds. That goes for everyone, you included.
 //
 // Two cooldowns, both silent:
 //   - Each sound has its own, so one sound can't be played on repeat.
@@ -30,6 +35,10 @@ public class CPHInline
 
     // After any viewer's sound, no viewer can play another for this long.
     private const int GlobalCooldownSeconds = 10;
+
+    // The sounds chat can play right now, by command (without the !). Every other sound in
+    // Sounds is locked. (A plain array: HashSet isn't available in Streamer.bot.)
+    private static readonly string[] Unlocked = { "oof", "bruh", "faaah", "meow" };
 
     private class Sound
     {
@@ -101,6 +110,12 @@ public class CPHInline
             return true;
         }
 
+        if (!IsUnlocked(command))
+        {
+            CPH.LogInfo("[sfx] !" + command + " is locked - add it to Unlocked in sfx.cs");
+            return true;
+        }
+
         string path = Path.Combine(SoundsFolder, sound.File);
         if (!File.Exists(path))
         {
@@ -123,6 +138,11 @@ public class CPHInline
         return true;
     }
 
+    private static bool IsUnlocked(string command)
+    {
+        return Array.IndexOf(Unlocked, command) >= 0;
+    }
+
     private Sound Find(string command)
     {
         foreach (var entry in Sounds)
@@ -130,12 +150,12 @@ public class CPHInline
         return null;
     }
 
-    // Only the sounds whose files are actually there.
+    // Only the unlocked sounds whose files are actually there.
     private string List()
     {
         var names = new List<string>();
         foreach (var entry in Sounds)
-            if (File.Exists(Path.Combine(SoundsFolder, entry.Value.File))) names.Add("!" + entry.Key);
+            if (IsUnlocked(entry.Key) && File.Exists(Path.Combine(SoundsFolder, entry.Value.File))) names.Add("!" + entry.Key);
 
         if (names.Count == 0) return "The tavern's sound board is empty for now. kingbre3O7";
         return "kingbre3Dance Sounds: " + string.Join(" ", names.ToArray());

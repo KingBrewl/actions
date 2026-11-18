@@ -189,7 +189,12 @@ also ends, and the player who was waiting wins.
 
 1. Download it into the sounds folder, for example from [myinstants](https://www.myinstants.com).
 2. Add a line to `Sounds` in `sfx.cs`: the command, the file name, the volume and the cooldown.
-3. Add the command (e.g. `!bruh`) to the action's trigger, then paste `sfx.cs` in again.
+3. Add the command to `Unlocked` in `sfx.cs` if chat should be able to play it.
+4. Add the command (e.g. `!bruh`) to the action's trigger, then paste `sfx.cs` in again.
+
+Chat can only play the sounds in `Unlocked`: for now `!oof`, `!bruh`, `!faaah` and `!meow`. The
+other sounds stay in `Sounds` with their volumes, but they're locked: their commands do nothing
+and `!sounds` doesn't list them.
 
 If a sound's file is missing, the sound is skipped and left out of `!sounds`, so you can add
 the line before you have the file.
