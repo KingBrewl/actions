@@ -17,7 +17,7 @@ public class CPHInline
         if (game.Length == 0) game = CurrentGame();
 
         if (game.Length == 0)
-            CPH.SendMessage("Even the tavern's mapmakers don't know which realm KingBrewl is in. kingbre3Lol");
+            CPH.SendMessage("Even the tavern's mapmakers don't know which realm KingBrewl is in. kingbre3LOL");
         else
             CPH.SendMessage("KingBrewl is braving the realms of " + game + "! Gear up, adventurers. kingbre3Pew");
         return true;

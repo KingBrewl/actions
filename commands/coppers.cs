@@ -146,7 +146,7 @@ public class CPHInline
         }
         if (targetLogin == login)
         {
-            CPH.SendMessage(user + " moves their coppers from one pocket to the other. Very generous. kingbre3Lol");
+            CPH.SendMessage(user + " moves their coppers from one pocket to the other. Very generous. kingbre3LOL");
             return;
         }
 

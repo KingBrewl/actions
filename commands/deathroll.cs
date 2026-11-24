@@ -112,7 +112,7 @@ public class CPHInline
                 if (game.Phase == "challenge" && login == game.P2Login)
                 {
                     Clear();
-                    CPH.SendMessage(game.P2Name + " declines " + game.P1Name + "'s deathroll. Wise, or cowardly? kingbre3Lol");
+                    CPH.SendMessage(game.P2Name + " declines " + game.P1Name + "'s deathroll. Wise, or cowardly? kingbre3LOL");
                 }
                 return true;
             case "cancel":
@@ -162,7 +162,7 @@ public class CPHInline
         }
         if (targetLogin == login)
         {
-            CPH.SendMessage(user + ", you can't deathroll yourself. Well, you can, but you'd lose. kingbre3Lol");
+            CPH.SendMessage(user + ", you can't deathroll yourself. Well, you can, but you'd lose. kingbre3LOL");
             return;
         }
 

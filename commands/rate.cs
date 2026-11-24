@@ -42,8 +42,8 @@ public class CPHInline
             UpTo = new[] { 1, 4, 7, 11, 12 },
             Lines = new[]
             {
-                "{target}'s pp is 1 inch. The royal ruler is being checked for faults. kingbre3Lol",
-                "{target}'s pp is {n} inches. The tavern offers its condolences. kingbre3Lol",
+                "{target}'s pp is 1 inch. The royal ruler is being checked for faults. kingbre3LOL",
+                "{target}'s pp is {n} inches. The tavern offers its condolences. kingbre3LOL",
                 "{target}'s pp is {n} inches. Respectable. The barkeep nods. kingbre3Howdy",
                 "{target}'s pp is {n} inches. The bards will sing of it. kingbre3King",
                 "{target}'s pp is 12 inches. By royal decree, it is legendary. kingbre3Golden"
@@ -57,8 +57,8 @@ public class CPHInline
             UpTo = new[] { 0, 25, 50, 75, 99, 100 },
             Lines = new[]
             {
-                "{target} has 0% rizz. Even the goose won't look at them. kingbre3Lol",
-                "{target} has {n}% rizz. The bard is playing a sad song for them. kingbre3Lol",
+                "{target} has 0% rizz. Even the goose won't look at them. kingbre3LOL",
+                "{target} has {n}% rizz. The bard is playing a sad song for them. kingbre3LOL",
                 "{target} has {n}% rizz. Enough for a second drink, not a second look. kingbre3Howdy",
                 "{target} has {n}% rizz. The whole table laughs at their jokes. kingbre3Cool",
                 "{target} has {n}% rizz. Hearts flutter across the tavern. kingbre3Heart",

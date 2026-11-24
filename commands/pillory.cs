@@ -75,7 +75,7 @@ public class CPHInline
     };
 
     // A lone line for pillorying yourself - no crime picked, they've confessed to something.
-    private const string SelfLine = "{user} locks THEMSELVES in the pillory and asks chat to throw gently. Respect the honesty. kingbre3Lol";
+    private const string SelfLine = "{user} locks THEMSELVES in the pillory and asks chat to throw gently. Respect the honesty. kingbre3LOL";
 
     private static readonly Random Rng = new Random();
 
