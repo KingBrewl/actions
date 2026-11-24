@@ -60,7 +60,7 @@ When you change a file, paste it into its action again.
 | `commands/clip.cs` | Command `!clip` | Makes a Twitch clip and posts the link. See [Clips](#clips) |
 | `commands/death.cs` | Command `!death` and `!deaths` in one trigger | Death counter shown in chat and on screen. See [Death counter](#death-counter) |
 | `commands/letsgo.cs` | Command `!letsgo` / `!lg` | Counts "let's go"s for this stream and all time. See [Let's go](#lets-go) |
-| `commands/rate.cs` | Command `!pp` and `!rizz` in one trigger | Rates the asker or `@name`. Each person's result stays the same until the next day, which starts at 6am |
+| `commands/rate.cs` | Command `!pp`, `!rizz` and `!girth` in one trigger | Rates the asker or `@name`. Each person's result stays the same until the next day, which starts at 6am |
 | `commands/coppers.cs` | Command `!coppers` / `!copper` / `!give` | Your coppers and leaderboard place, `@name`'s, or `!coppers top`. `!give @name 5` hands coppers to someone. See [Coppers](#coppers) |
 | `commands/gamble.cs` | Command `!gamble` | Bets coppers on a 1–100 roll. See [Coppers](#coppers) |
 | `commands/deathroll.cs` | Command `!deathroll` / `!dr` | The WoW deathroll game between two viewers, with or without a coppers bet. See [Deathroll](#deathroll) |

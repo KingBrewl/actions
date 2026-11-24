@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-// Trigger: Twitch -> Command, with "!pp" and "!rizz" in the command box — one action serves
-// both, the way links.cs serves every link. Chat-only.
+// Trigger: Twitch -> Command, with "!pp", "!rizz" and "!girth" in the command box — one action
+// serves all three, the way links.cs serves every link. Chat-only.
 //
-//   !pp / !rizz               -> rates the asker
-//   !pp @name / !rizz @name   -> rates someone else
+//   !pp / !rizz / !girth      -> rates the asker
+//   !pp @name (etc.)          -> rates someone else
 //
 // Each result is fixed for the day. The number comes from the viewer's login, the command and
 // the date rather than a fresh roll, so asking again — or someone else asking about you — gives
@@ -24,11 +24,15 @@ public class CPHInline
      *
      * Lean tilts the odds: 1 keeps every number equally likely, above 1 leans toward Max
      * (1.25 is gentle - the average moves from the middle to about 56% of the way up).
+     *
+     * Bell averages that many rolls instead of taking one, which bunches results in the
+     * middle and makes both ends rare: 1 is flat, 3 is a clear bell. Lean still applies after.
      * ----------------------------------------------------------------------------------- */
     private class Rating
     {
         public int Min, Max;
         public double Lean = 1;
+        public int Bell = 1;
         public int[] UpTo;
         public string[] Lines;
     }
@@ -63,6 +67,24 @@ public class CPHInline
                 "{target} has {n}% rizz. The whole table laughs at their jokes. kingbre3Cool",
                 "{target} has {n}% rizz. Hearts flutter across the tavern. kingbre3Heart",
                 "{target} has 100% rizz. Unspoken. The whole tavern blushes. kingbre3Golden"
+            }
+        },
+        // Bell 3 + Lean 1.25 comes out at roughly 1: 0.2%, 2: 2%, 3: 9%, 4: 21%, 5: 30%,
+        // 6: 25%, 7: 11%, 8: 1.6% - half land on 4-5, a third on 6-7.
+        ["girth"] = new Rating
+        {
+            Min = 1,
+            Max = 8,
+            Lean = 1.25,
+            Bell = 3,
+            UpTo = new[] { 1, 3, 5, 7, 8 },
+            Lines = new[]
+            {
+                "{target}'s girth is 1 inch around. The tailor's measuring tape came back empty. kingbre3LOL",
+                "{target}'s girth is {n} inches around. Thinner than a tavern candle. kingbre3LOL",
+                "{target}'s girth is {n} inches around. Sturdy as a barrel stave. kingbre3Howdy",
+                "{target}'s girth is {n} inches around. Thick as the tavern's oak beams. kingbre3King",
+                "{target}'s girth is 8 inches around. The tavern door has been widened by royal decree. kingbre3Golden"
             }
         }
     };
@@ -120,6 +142,29 @@ public class CPHInline
         DateTime day = DateTime.Now.AddHours(-DayStartsAtHour);
         string key = login + "|" + command + "|" + day.Year + "-" + day.Month + "-" + day.Day;
 
+        uint hash = Hash(key);
+        uint span = (uint)(rating.Max - rating.Min + 1);
+        if (rating.Lean == 1 && rating.Bell <= 1) return rating.Min + (int)(hash % span);
+
+        // Each extra roll for Bell hashes the key with its number added, so the rolls are
+        // independent of each other but still fixed for the day. The first roll is the plain
+        // hash, which keeps !pp and !rizz giving the same numbers they always have.
+        double fraction = hash / 4294967296.0;
+        for (int roll = 1; roll < rating.Bell; roll++)
+            fraction += Hash(key + "|" + roll) / 4294967296.0;
+        if (rating.Bell > 1) fraction /= rating.Bell;
+
+        // Leaning: raise the fraction (0 up to, not including, 1) to 1/Lean. That curve keeps
+        // 0 at 0 and 1 at 1 but bows upward in between, so more of the range lands on the high
+        // side. The clamp covers floating-point rounding.
+        double leaned = Math.Pow(fraction, 1.0 / rating.Lean);
+        int step = (int)(leaned * span);
+        if (step >= (int)span) step = (int)span - 1;
+        return rating.Min + step;
+    }
+
+    private uint Hash(string key)
+    {
         uint hash = 2166136261;
         unchecked
         {
@@ -134,18 +179,7 @@ public class CPHInline
             hash *= 0xc2b2ae35;
             hash ^= hash >> 16;
         }
-
-        uint span = (uint)(rating.Max - rating.Min + 1);
-        if (rating.Lean == 1) return rating.Min + (int)(hash % span);
-
-        // Leaning: turn the hash into a fraction from 0 up to (not including) 1, and raise it
-        // to 1/Lean. That curve keeps 0 at 0 and 1 at 1 but bows upward in between, so more
-        // of the range lands on the high side. The clamp covers floating-point rounding.
-        double fraction = hash / 4294967296.0;
-        double leaned = Math.Pow(fraction, 1.0 / rating.Lean);
-        int step = (int)(leaned * span);
-        if (step >= (int)span) step = (int)span - 1;
-        return rating.Min + step;
+        return hash;
     }
 
     // Kept in a user variable that isn't saved, so a restart forgets it — a cooldown doesn't
