@@ -158,7 +158,7 @@ at the same moment.
 | `!coppers top` | The 5 richest |
 | `!give @name 5` | Hands 5 of your coppers to someone. `!coppers give @name 5` works too |
 | `!coppers add @name 5` / `take @name 5` | Mods: give or take up to 1000 at a time |
-| `!gamble 5` / `half` / `all` | Rolls 1–100. 1–54 loses the bet, 55–98 wins the same amount, 99–100 wins double |
+| `!gamble 5` / `half` / `all` | Rolls 1–100. 1–52 loses the bet, 53–97 wins the same amount, 98–100 wins double |
 
 Gambling loses about 6% of what's bet over time, so it removes coppers from the tavern instead of
 adding more. The leaderboard covers everyone who has ever held a copper.

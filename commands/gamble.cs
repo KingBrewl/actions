@@ -10,11 +10,11 @@ using System.Collections.Generic;
 //
 // A roll from 1 to 100 decides it:
 //
-//   1-54     lose the bet
-//   55-98    win the bet back, plus the same again
-//   99-100   jackpot: the bet back, plus twice as much again
+//   1-52     lose the bet
+//   53-97    win the bet back, plus the same again
+//   98-100   jackpot: the bet back, plus twice as much again
 //
-// The house wins slightly more than it loses (about 6% of every copper bet over time), so
+// The house wins slightly more than it loses (about 1% of every copper bet over time), so
 // gambling drains coppers rather than printing them. Checking in and supporting the channel
 // stay the only ways to get rich. Move LoseUpTo or JackpotFrom to change that.
 //
@@ -22,9 +22,9 @@ using System.Collections.Generic;
 public class CPHInline
 {
     // Rolls up to this lose. Above it, up to JackpotFrom - 1, win the bet.
-    private const int LoseUpTo = 54;
+    private const int LoseUpTo = 52;
     // Rolls from this up to 100 win twice the bet.
-    private const int JackpotFrom = 99;
+    private const int JackpotFrom = 98;
 
     // Per person: repeats inside it get no reply, which keeps one viewer from turning chat
     // into a slot machine. 0 switches it off.
@@ -48,7 +48,7 @@ public class CPHInline
 
         if (word.Length == 0 || word == "help")
         {
-            CPH.SendMessage(user + ", !gamble <amount>, half or all. Roll 55+ to double it, 99+ to triple it. Purse: " + purse + " kingbre3Golden");
+            CPH.SendMessage(user + ", !gamble <amount>, half or all. Roll " + (LoseUpTo + 1) + "+ to double it, " + JackpotFrom + "+ to triple it. Purse: " + purse + " kingbre3Golden");
             return true;
         }
 
