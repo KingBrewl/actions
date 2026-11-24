@@ -21,10 +21,14 @@ public class CPHInline
      * The ratings. Each command picks a number from Min to Max, then the first line whose
      * UpTo is at or above it. {target} is who's being rated and {n} the number. Adding a
      * command is a new entry here plus the name in the trigger's command box.
+     *
+     * Lean tilts the odds: 1 keeps every number equally likely, above 1 leans toward Max
+     * (1.25 is gentle - the average moves from the middle to about 56% of the way up).
      * ----------------------------------------------------------------------------------- */
     private class Rating
     {
         public int Min, Max;
+        public double Lean = 1;
         public int[] UpTo;
         public string[] Lines;
     }
@@ -49,6 +53,7 @@ public class CPHInline
         {
             Min = 0,
             Max = 100,
+            Lean = 1.25,
             UpTo = new[] { 0, 25, 50, 75, 99, 100 },
             Lines = new[]
             {
@@ -131,7 +136,16 @@ public class CPHInline
         }
 
         uint span = (uint)(rating.Max - rating.Min + 1);
-        return rating.Min + (int)(hash % span);
+        if (rating.Lean == 1) return rating.Min + (int)(hash % span);
+
+        // Leaning: turn the hash into a fraction from 0 up to (not including) 1, and raise it
+        // to 1/Lean. That curve keeps 0 at 0 and 1 at 1 but bows upward in between, so more
+        // of the range lands on the high side. The clamp covers floating-point rounding.
+        double fraction = hash / 4294967296.0;
+        double leaned = Math.Pow(fraction, 1.0 / rating.Lean);
+        int step = (int)(leaned * span);
+        if (step >= (int)span) step = (int)span - 1;
+        return rating.Min + step;
     }
 
     // Kept in a user variable that isn't saved, so a restart forgets it — a cooldown doesn't
